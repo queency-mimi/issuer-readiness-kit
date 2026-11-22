@@ -20,3 +20,7 @@ fork-test/test_snapshots/
 !.env.example
 *.secret
 *.key
+
+# Market research (private until the user decides to publish)
+research_notes/
+reports/
