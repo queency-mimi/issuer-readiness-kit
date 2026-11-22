@@ -1,0 +1,41 @@
+[workspace]
+resolver = "2"
+# Filled as the Rust projects move in: holders-at-ledger crates, then token-invariants crates.
+# Kept OUT of this workspace (own [workspace], own Cargo.lock), because their soroban-sdk
+# versions cannot share a lockfile with the rest:
+#   fork-test/           soroban-sdk =29.0.1 (holders-at-ledger fork export check)
+#   contracts/rwa-demo/  soroban-sdk 25 + OZ stellar-tokens =0.7.1 (maker-checker demo token)
+members = []
+
+[workspace.package]
+version = "0.0.0"
+edition = "2021"
+license = "Apache-2.0"
+publish = false
+rust-version = "1.91"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+hex = "0.4"
+thiserror = "2"
+clap = { version = "4", features = ["derive"] }
+# =28.0.0 is what soroban-env 29.0.x pins (protocol 29); both holders-at-ledger and the
+# token-invariants census already use it.
+stellar-xdr = { version = "=28.0.0", default-features = false, features = ["std", "base64", "serde"] }
+
+# Host binaries (CLI, JSON-RPC server): unwind on panic, keep overflow checks.
+[profile.release]
+overflow-checks = true
+
+# Soroban wasm builds (token-invariants subjects): build with `--profile release-wasm`.
+[profile.release-wasm]
+inherits = "release"
+opt-level = "z"
+debug = 0
+strip = "symbols"
+debug-assertions = false
+panic = "abort"
+codegen-units = 1
+lto = true

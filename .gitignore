@@ -1,0 +1,22 @@
+# Node
+node_modules/
+dist/
+out/
+*.log
+web/public/data/
+site/.astro/
+
+# Rust
+target/
+crates/*/test_snapshots/
+fork-test/test_snapshots/
+
+# Local data caches (holders-at-ledger lake + index, token-invariants census): large, never commit
+.cache/
+
+# G-SECRETS: never commit keys
+.env
+.env.*
+!.env.example
+*.secret
+*.key

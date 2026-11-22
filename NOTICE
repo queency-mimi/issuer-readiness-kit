@@ -1,0 +1,10 @@
+Issuer Readiness Kit
+Copyright 2026 the Stellar Institutional Kit contributors
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This repository merges five projects of the Stellar Institutional Kit:
+dtc-kit, holders-at-ledger, token-invariants, preflight-harness and
+maker-checker. Third-party code copied into this repository, if any, is listed
+here with its source, commit and licence. Normal package-manager dependencies
+are not copied code and are recorded in the lockfiles.

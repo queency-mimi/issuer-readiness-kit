@@ -1,0 +1,23 @@
+{
+  "name": "@sik/issuer-readiness-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Issuer readiness kit for tokenized assets on Stellar: wallet receive checks, token invariants, maker-checker controls, record-date holder snapshots, DTC-shaped readiness reports.",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.22.0",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "lint": "pnpm -r --if-present lint",
+    "check": "pnpm -r --if-present check",
+    "check:all": "bash scripts/check.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^7.0.2"
+  }
+}
