@@ -27,7 +27,7 @@ Each tool arrives unchanged, with its own checks green, before anything is merge
 | # | Milestone | Size | Done when | Status |
 |---|---|---|---|---|
 | M1 | Monorepo scaffold | S | pnpm + Cargo workspaces, `scripts/check.sh`, ADR-0001, MIGRATION.md, pushed | done (`4b0bb3c`) |
-| M2 | dtc-kit moves in | M | 7 packages under `packages/dtc-kit-*`; 260 tests pass; holders-at-ledger schema path rewritten (MIGRATION.md) | done: 260/260 tests, lint and typecheck green; conformance runs identical to the original folder |
+| M2 | dtc-kit moves in | M | 7 packages under `packages/dtc-kit-*`; 260 tests pass; holders-at-ledger schema path rewritten (MIGRATION.md) | done (`e6c4eff`) |
 | M3 | preflight-harness and maker-checker move in | M | both under `packages/`; preflight validates against the in-repo ScenarioPack schema, no `../dtc-kit` path; maker-checker 70 tests pass; `contracts/rwa-demo` builds as its own workspace | planned |
 | M4 | holders-at-ledger moves in | M | 7 crates in the Cargo workspace, `fork-test/` separate; 63 tests offline; Python verifier passes; no `.cache/` in git | planned |
 | M5 | token-invariants moves in | M | 6 crates in the workspace; wasm subjects build with `--profile release-wasm`; 69 tests and all 56 planted bugs caught; census re-derives offline | planned |

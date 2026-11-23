@@ -1,56 +1,95 @@
-# issuer-readiness-kit
+# Issuer Readiness Kit
 
-Open-source tooling for issuers of tokenized assets on Stellar: check that wallets can receive the token, that the token behaves to standard, that control actions (freeze, forced transfer) go through approval, who held the token on a record date, and how ready the whole setup is against DTC-shaped requirements.
+**Verifiable evidence that a tokenized asset on Stellar is ready to issue.**
 
-**Status (2026-11-22): moving in.** dtc-kit is in (7 packages, 260 tests passing). The other four tools are being moved in from the Stellar Institutional Kit; until each one lands, its code and status live in its original project folder. Plan: [`MILESTONES.md`](MILESTONES.md). Nothing here is audited. Testnet only for anything that writes. DTC-shaped, not DTC-certified.
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+![Node >= 22.18](https://img.shields.io/badge/node-%3E%3D22.18-339933.svg)
+![Rust 1.97.1](https://img.shields.io/badge/rust-1.97.1-orange.svg)
+![Status: pre-release](https://img.shields.io/badge/status-pre--release-lightgrey.svg)
 
-## The five tools
+The Issuer Readiness Kit is open-source tooling for issuers, transfer agents and auditors of tokenized assets on Stellar. It walks one token through five questions and records the answer to each as evidence that can be re-checked:
 
-| Step | Question | Tool | Language | Moves into |
-|---|---|---|---|---|
-| 1 | Can this wallet receive the token? | preflight-harness | TypeScript | `packages/preflight-harness` |
-| 2 | Does the token behave to SEP-41 / SEP-57? | token-invariants | Rust | `crates/token-invariants-*` |
-| 3 | Who approved this freeze or forced transfer? | maker-checker | TypeScript | `packages/maker-checker`, `contracts/rwa-demo` |
-| 4 | Who held the token at ledger N? | holders-at-ledger | Rust | `crates/holders-at-ledger-*`, `fork-test/` |
-| 5 | How ready are we for DTC-style tokenization? | dtc-kit | TypeScript | `packages/dtc-kit-*` (moved in) |
+| # | Question | Tool |
+|---|---|---|
+| 1 | Can the wallets that will hold the token receive it? | preflight-harness |
+| 2 | Does the token behave as SEP-41 / SEP-57 require? | token-invariants |
+| 3 | Did every freeze or forced transfer go through maker-checker approval, with an audit trail? | maker-checker |
+| 4 | Who held the token at the record date, reconciled to supply? | holders-at-ledger |
+| 5 | How ready is the setup against DTC-shaped requirements, row by row? | dtc-kit |
 
-How each source file maps to its new place: [`docs/MIGRATION.md`](docs/MIGRATION.md). Why this is one repo: [`docs/adr/ADR-0001-monorepo.md`](docs/adr/ADR-0001-monorepo.md).
+> [!IMPORTANT]
+> **Pre-release.** The kit is being assembled from five standalone tools. Nothing here is audited. Anything that writes to a network runs on testnet only. Requirement profiles are **DTC-shaped, not DTC-certified**: the kit makes no claim of DTC certification or compatibility.
 
-## Layout
+## Status
 
-```
-packages/    TypeScript packages, one pnpm workspace
-crates/      Rust crates, one Cargo workspace
-contracts/   Soroban contracts with their own Cargo workspace (soroban-sdk pins differ)
-fork-test/   separate Cargo workspace (soroban-sdk 29)
-web/         one web console for all five tools
-fixtures/    recorded testnet / mainnet evidence, each file with provenance
-docs/        ADRs, specs, migration map
-scripts/     repo-wide scripts (check.sh)
-```
+| Tool | Language | Location | Status |
+|---|---|---|---|
+| dtc-kit | TypeScript | `packages/dtc-kit-*` | In repo: 7 packages, 260 tests passing |
+| preflight-harness | TypeScript | `packages/preflight-harness` | Planned (M3) |
+| maker-checker | TypeScript, Soroban | `packages/maker-checker`, `contracts/rwa-demo` | Planned (M3) |
+| holders-at-ledger | Rust | `crates/holders-at-ledger-*`, `fork-test/` | Planned (M4) |
+| token-invariants | Rust | `crates/token-invariants-*` | Planned (M5) |
 
-## Requirements
+The full plan to a working MVP, a single evidence pack from one command and a web console to view it, is in [`MILESTONES.md`](MILESTONES.md).
 
-- Node >= 22.18 (24 recommended, see `.nvmrc`), pnpm 10.22.0. TypeScript runs directly through Node type stripping, with no build step.
-- Rust 1.97.1 with the `wasm32v1-none` target (pinned in `rust-toolchain.toml`).
+## Getting started
 
-## Commands
+### Requirements
 
-```
+- Node.js 22.18 or later (24 recommended; see `.nvmrc`). TypeScript runs directly through Node's type stripping, so there is no build step.
+- pnpm 10.22.0
+- Rust 1.97.1 with the `wasm32v1-none` target, pinned in `rust-toolchain.toml` (needed from M4 onwards)
+
+### Install and verify
+
+```sh
 pnpm install
-pnpm check          # all TypeScript packages: lint, typecheck, tests
-bash scripts/check.sh   # everything: TypeScript, Rust workspace, separate Rust workspaces
-
-# dtc-kit
-pnpm dtc:profiles check                       # requirement profiles and their row statuses
-pnpm dtc:conformance run                      # 36 scenarios against the mock DTC sandbox
-pnpm dtc:conformance run --target testnet-recorded --adapter stellar-sac   # against the recorded testnet run
-pnpm dtc:sandbox                              # mock DTC registry API on 127.0.0.1:8080
-pnpm dtc:export-pack                          # regenerate the ScenarioPack JSON
+pnpm check              # lint, typecheck and tests for all TypeScript packages
+bash scripts/check.sh   # every check in the repository, TypeScript and Rust
 ```
 
-Layout rule: code in `packages/` and `crates/`; each tool's fixtures, schemas, scripts and docs under `fixtures/<tool>/`, `schemas/<tool>/`, `scripts/<tool>/`, `docs/<tool>/`.
+## Usage
 
-## Licence
+### DTC readiness (dtc-kit)
 
-Apache-2.0. See `LICENSE` and `NOTICE`.
+```sh
+pnpm dtc:profiles check       # requirement profiles and the trust level of each row
+pnpm dtc:conformance run      # 36 scenarios against the mock DTC sandbox
+pnpm dtc:sandbox              # mock DTC registry API on 127.0.0.1:8080
+pnpm dtc:export-pack          # regenerate the ScenarioPack JSON
+```
+
+Replay the recorded testnet run through the Stellar Asset Contract adapter:
+
+```sh
+pnpm dtc:conformance run --target testnet-recorded --adapter stellar-sac
+```
+
+Each requirement row carries a trust level: `published` (from a public DTC source), `inferred` (derived from published material) or `unknown`. Every result reports the weakest level behind it, so a pass is never stronger than the requirement it was checked against.
+
+## Repository layout
+
+```
+packages/    TypeScript packages (one pnpm workspace)
+crates/      Rust crates (one Cargo workspace)
+contracts/   Soroban contracts (separate Cargo workspace; soroban-sdk pins differ)
+fork-test/   fork tests (separate Cargo workspace; soroban-sdk 29)
+web/         web console for all five tools
+fixtures/    recorded testnet and mainnet evidence, each file with provenance
+schemas/     published JSON Schemas
+scripts/     repository-wide and per-tool scripts
+docs/        architecture decisions, per-tool specifications, migration map
+```
+
+Code lives in `packages/` and `crates/`, prefixed with the tool name. Everything else a tool owns sits under a folder named after it (`fixtures/<tool>/`, `schemas/<tool>/`, `scripts/<tool>/`, `docs/<tool>/`), so no two tools share a path.
+
+## Documentation
+
+- [`MILESTONES.md`](MILESTONES.md): roadmap to the MVP and beyond
+- [`docs/adr/ADR-0001-monorepo.md`](docs/adr/ADR-0001-monorepo.md): why the five tools share one repository
+- [`docs/MIGRATION.md`](docs/MIGRATION.md): where each source file lands, and its move status
+- [`docs/dtc-kit/`](docs/dtc-kit/): dtc-kit specification, architecture, risks and testing
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE). See [`NOTICE`](NOTICE) for attributions.
