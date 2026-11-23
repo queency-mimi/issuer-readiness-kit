@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: Apache-2.0
+# Scaffold. NOT yet run: docker is not installed on the machine that produced this file (see DTC-017).
+# Run from packages/dtc-kit-sandbox:  docker compose up --build
+name: dtc-kit-sandbox
+
+services:
+  dtc-sandbox:
+    build:
+      context: ../..
+      dockerfile: packages/dtc-kit-sandbox/Dockerfile
+    environment:
+      PORT: "8080"
+      # dtc-generic = chain-neutral rows only; dtc-stellar = adds the inferred/unknown Stellar rows.
+      DTC_PROFILE: ${DTC_PROFILE:-dtc-stellar}
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8080/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Optional: a local Stellar network for the adapters (DTC-023, DTC-026). The image tag is deliberately
+  # not pinned here: record the tag you verified in packages/dtc-kit-sandbox/.env and in TESTING.md (unverified [U]).
+  stellar:
+    profiles: ["stellar"]
+    image: ${STELLAR_QUICKSTART_IMAGE:?set STELLAR_QUICKSTART_IMAGE in .env, see TESTING.md}
+    command: ["--local", "--enable", "rpc"]
+    ports:
+      - "8000:8000"

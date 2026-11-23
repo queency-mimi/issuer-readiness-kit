@@ -1,0 +1,24 @@
+{
+  "name": "@sik/dtc-kit-conformance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "ScenarioPack format, runner stub and the tagged scenario catalogue for DTC readiness.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./browser": "./src/browser.ts",
+    "./schema": "./schema/scenario-pack.schema.json",
+    "./packs/*": "./packs/*"
+  },
+  "dependencies": {
+    "@sik/dtc-kit-core": "workspace:*",
+    "@sik/dtc-kit-profile-spec": "workspace:*",
+    "@sik/dtc-kit-sandbox": "workspace:*",
+    "@sik/dtc-kit-adapter-stellar-sac": "workspace:*",
+    "@sik/dtc-kit-adapter-stellar-sep57": "workspace:*",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "@sik/dtc-kit-reconciliation": "workspace:*"
+  }
+}

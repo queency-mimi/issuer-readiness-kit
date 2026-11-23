@@ -1,0 +1,16 @@
+{
+  "name": "@sik/dtc-kit-adapter-stellar-sac",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "ChainAdapter for a Stellar classic asset fronted by a Stellar Asset Contract (SAC): AUTH_REQUIRED authorised trustlines as the allowlist, clawback as burn.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@sik/dtc-kit-core": "workspace:*",
+    "@sik/dtc-kit-profile-spec": "workspace:*",
+    "@stellar/stellar-sdk": "17.4.0"
+  }
+}

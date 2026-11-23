@@ -1,0 +1,12 @@
+{
+  "script": "holders-at-ledger snapshot --asset robovac:GAFB7IYPCYZCODQBB5BR5JO45JC4PPVLARUAXQSFHWTLH2KMHPWJ36GD --at ledger:65290900 --index .cache/index.redb --cache-dir .cache/lake --assert-new",
+  "capturedAt": "2026-11-04T16:55:00Z",
+  "sources": [
+    "https://aws-public-blockchain.s3.amazonaws.com/v1.1/stellar/ledgers/pubnet/ ledgers 65289616-65290900 (index window)",
+    "GET https://api.stellar.expert/explorer/public/asset?sort=created&order=desc&limit=10 (used only to pick an asset first seen inside the window)"
+  ],
+  "network": "public",
+  "ledgers": "65289616-65290900",
+  "bytes": 1970,
+  "notes": "Real pubnet asset first seen 2026-11-03 (Stellar Expert 'created' 1793740464 [V]), i.e. inside the index window, so --assert-new (SPEC 7.4) was used. reconciliation exact: holdersSum equals net CAP-67 SAC mint-burn-clawback over the window (RC-03). Stellar Expert reported supply 1000080000000 and 1 trustline at the time of listing [V], consistent. The index itself (1.1 GB) and the lake objects are not committed. Re-generated 2026-11-04 after a reboot with a rebuilt binary: snapshotHash sha256:619a9a0138c1c1a69f5067e083cbb35ddbf96ad678d2af205b0e3fd5a6a24bec is identical to the first run (2026-11-04 ~02:55Z). Run time 433 s wall / 57 s user at load ~20."
+}

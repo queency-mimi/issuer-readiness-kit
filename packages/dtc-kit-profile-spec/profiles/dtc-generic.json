@@ -1,0 +1,423 @@
+{
+  "$schema": "../schema/requirements-profile.schema.json",
+  "profileId": "dtc-generic",
+  "version": "2026-10-31",
+  "title": "DTC tokenization service: chain-independent requirements",
+  "description": "Rows copied from facts recorded in the discovery notes (dtc_participant_package_and_requirements.md section 2.3, meridian_dtcc_update.md) with their primary source URLs. 'published' means a primary page or the SEC no-action letter states it; the row was NOT independently re-verified by a human at scaffold time (see ticket DTC-006). Three rows are 'inferred' on purpose: whole-token-only and the 8:00 pm ET capture are stated on help pages for the live networks (Canton, Besu) and assumed to carry over to every network; the effect of chill/lock states is our reading of state names.",
+  "disclaimer": "DTC-shaped, not DTC-certified. Not legal advice. Rows come from public DTCC and SEC documents read on the dates shown; the login-gated DTCC documents (API Reference Guide, Wallet Solution Provider Connectivity Guide, Onboarding and Client Readiness Checklists) have NOT been read.",
+  "createdAt": "2026-10-31",
+  "rows": [
+    {
+      "id": "wallet.only-participants-register",
+      "area": "wallet",
+      "statement": "Only DTC Participants may register wallets; the Participant is fully responsible for activity in each Registered Wallet and DTC recognises only the Participant as entitlement holder, even if a client holds the keys.",
+      "value": { "registrants": ["dtc-participant"], "participantResponsibleForActivity": true, "dtcRecognisedHolder": "participant" },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11 (Preliminary Base Version)", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "conditions, rep 3; section III 'Only Participants May Register Wallets'" },
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/welcome.htm", "title": "DTCC Learning Center: welcome", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W1",
+      "tags": ["registered-wallet"]
+    },
+    {
+      "id": "wallet.registration-ofac-screening",
+      "area": "wallet",
+      "statement": "Registration requires a supported blockchain that satisfies DTC's Technology Standards and DTC's own OFAC screening of the wallet.",
+      "value": { "screen": "dtc-ofac", "requiredBeforeAllowlist": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "rep 4" },
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/register_wallets.htm", "title": "DTCC Learning Center: register wallets", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W2",
+      "tags": ["registered-wallet", "ofac"]
+    },
+    {
+      "id": "wallet.registration-status-taxonomy",
+      "area": "wallet",
+      "statement": "Wallet statuses published by DTCC: Processing, Completed, Failed Compliance (not allowlisted, barred from conversion orders), Failed (technical or unresolved review), Delivery Order Chill, Global Lock, Compliance Lock (sanctions via the SMF feed).",
+      "value": {
+        "statuses": ["Processing", "Completed", "Failed Compliance", "Failed", "Delivery Order Chill", "Global Lock", "Compliance Lock"],
+        "failedComplianceBarredFromConversionOrders": true
+      },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/register_wallets.htm", "title": "DTCC Learning Center: register wallets", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W2",
+      "tags": ["registered-wallet", "status-taxonomy"]
+    },
+    {
+      "id": "wallet.control-state-semantics",
+      "area": "wallet",
+      "statement": "What each control state does on-chain: Delivery Order Chill blocks outbound delivery, Global Lock blocks all activity, Compliance Lock blocks all activity pending sanctions review. The status NAMES are published; the effects are our reading.",
+      "value": {
+        "Delivery Order Chill": { "blocksOutbound": true, "blocksInbound": false },
+        "Global Lock": { "blocksOutbound": true, "blocksInbound": true },
+        "Compliance Lock": { "blocksOutbound": true, "blocksInbound": true }
+      },
+      "status": "inferred",
+      "confidence": "low",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/glossary.htm", "title": "DTCC Learning Center: glossary", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "names only" }
+      ],
+      "basis": "Help pages name the states and say chill/lock is used around corporate actions; none of the pages read describe inbound versus outbound effect. Values are the conservative reading used by the sandbox and must be replaced when the participant guides are read.",
+      "unblockedBy": "DTCC Client Readiness Checklist or API Reference Guide (login-gated)",
+      "tags": ["chill", "lock"]
+    },
+    {
+      "id": "wallet.participant-kyc-aml-duty",
+      "area": "wallet",
+      "statement": "The Participant remains responsible for KYC/AML on client wallets; DTCC may at its discretion run additional OFAC or risk checks.",
+      "value": { "party": "participant", "dtcMayRunAdditionalChecks": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/register_wallets.htm", "title": "DTCC Learning Center: register wallets", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W3",
+      "tags": ["kyc-aml"]
+    },
+    {
+      "id": "wallet.address-not-validated-by-dtc",
+      "area": "wallet",
+      "statement": "DTCC does not validate wallet addresses; Wallet Address is free text plus a ledger selection, and DTCC assumes the registrant owns or is authorised on the wallet.",
+      "value": { "dtcValidatesAddress": false, "fields": ["walletAddress", "ledger"] },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/register_a_wallet.htm", "title": "DTCC Learning Center: register a wallet", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W4",
+      "tags": ["registered-wallet"]
+    },
+    {
+      "id": "wallet.account-model",
+      "area": "wallet",
+      "statement": "A Classic account (FreeMA/FreeNA) plus a Digital account with Client Accounts (sub-ledger wallets for custodians and prime brokers) and Internal Accounts; an Account/Client Identifier ties client wallets to a client record.",
+      "value": {
+        "classic": ["FreeMA", "FreeNA"],
+        "digitalBuckets": ["client", "internal"],
+        "walletTypes": ["internal", "client"],
+        "clientIdentifierLinksWallet": true
+      },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/accounts_oct_rev.htm", "title": "DTCC Learning Center: accounts", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W5",
+      "tags": ["sub-ledger"]
+    },
+    {
+      "id": "wallet.csv-exports",
+      "area": "wallet",
+      "statement": "CSV exports exist for Register Wallets, Account (Balance, Activity, Wallets tabs) and Conversion Orders. Activity types include Payment Received, Payment, freeze and unfreeze. Column layouts are not recorded in the notes.",
+      "value": { "exports": ["register-wallets", "account-balance", "account-activity", "account-wallets", "conversion-orders"], "format": "csv", "columnsRecorded": false },
+      "status": "published",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/accounts_oct_rev.htm", "title": "DTCC Learning Center: accounts", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/register_wallets.htm", "title": "DTCC Learning Center: register wallets", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W8",
+      "tags": ["csv"]
+    },
+    {
+      "id": "wallet.forced-reconversion",
+      "area": "wallet",
+      "statement": "DTCC may reconvert a participant's tokens to the classic account (Forced Reconversion) for regulatory, compliance or account reasons, with advance notice where feasible. Participants may reconvert to classic at any time.",
+      "value": { "dtcMayReconvertToClassic": true, "advanceNoticeWhereFeasible": true, "participantMayReconvertAnytime": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/glossary.htm", "title": "DTCC Learning Center: glossary", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/corp_actions_workflow.htm", "title": "DTCC Learning Center: corporate actions workflow", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "'Forced Reconversion' note" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W9",
+      "tags": ["conversion"]
+    },
+    {
+      "id": "token.transfer-only-to-registered-wallets",
+      "area": "token",
+      "statement": "Tokens are transferable only to Registered Wallets, enforced by smart-contract technology.",
+      "value": { "enforcement": "smart-contract", "destination": "registered-wallet" },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "conditions 5, 6; section III" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T2",
+      "tags": ["registered-wallet", "distribution-control"]
+    },
+    {
+      "id": "token.one-to-one-backing",
+      "area": "token",
+      "statement": "One token represents one share of the same CUSIP, 1:1 backed; the DTC Digital Omnibus Account holds the underlying and Cede & Co. stays the registered owner.",
+      "value": { "ratio": "1:1", "tokensPerShare": 1, "sameCusip": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T1",
+      "tags": ["backing"]
+    },
+    {
+      "id": "token.whole-tokens-only",
+      "area": "token",
+      "statement": "No fractional tokens: quantity is a whole number of tokens.",
+      "value": { "fractionalAllowed": false, "decimals": 0 },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/conversion_orders.htm", "title": "DTCC Learning Center: conversion orders", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "note: 'each token represents a share and the platform does not allow fractional tokens'" }
+      ],
+      "basis": "The help page states it for the live platform. Marked inferred because (a) the instruction for this profile was to treat it as an inference until a human confirms it applies on every network and (b) a Stellar classic asset or SAC has 7 fixed decimals and cannot enforce it by flags, so how DTCC would express it on Stellar is open.",
+      "unblockedBy": "Re-read by a human plus the Stellar Client Readiness Checklist",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T1,W8",
+      "tags": ["whole-token"]
+    },
+    {
+      "id": "authorities.dtc-override-root-wallet",
+      "area": "authorities",
+      "statement": "DTC holds a 'root wallet' key on each blockchain that can convert, transfer, mint or burn any Token even without the private key of the Registered Wallet; keys are in cold storage; each non-corporate-action use is reported quarterly to the SEC.",
+      "value": {
+        "holder": "dtc",
+        "actions": ["convert", "transfer", "mint", "burn"],
+        "holderSignatureRequired": false,
+        "coldStorage": true,
+        "nonCorporateActionUseReportedQuarterly": true
+      },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "condition 7; section III 'Override Keys'; rep 10" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T3",
+      "tags": ["force-transfer", "clawback", "override"]
+    },
+    {
+      "id": "authorities.force-transfer-reasons",
+      "area": "authorities",
+      "statement": "DTC-initiated claw-back or force-transfer is used for lost, stolen or erroneous transfers; participants must handle these events.",
+      "value": { "reasons": ["lost", "stolen", "erroneous"], "initiator": "dtc" },
+      "status": "published",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/glossary.htm", "title": "DTCC Learning Center: glossary", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W9",
+      "tags": ["force-transfer"]
+    },
+    {
+      "id": "authorities.dtc-initiated-mint-burn",
+      "area": "authorities",
+      "statement": "Mint and burn are DTC-initiated from the conversion order; participants do not issue tokens. A failed on-chain order that reverts triggers automatic reversal of ledger changes.",
+      "value": { "initiator": "dtc", "participantsIssueTokens": false, "onChainRevertReversesLedger": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/conversion_orders.htm", "title": "DTCC Learning Center: conversion orders", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T8",
+      "tags": ["conversion", "mint-burn"]
+    },
+    {
+      "id": "token.protocol-must-be-compliance-aware",
+      "area": "token",
+      "statement": "A protocol must demonstrate 'compliance aware' features by analysis and testing before DTC supports it; DTC cited ERC-3643 as an example and will publish a list of supported protocols; participants name the protocol on a Tokenization Instruction.",
+      "value": { "complianceAwareRequired": true, "exampleStandard": "ERC-3643", "dtcPublishesSupportedList": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "section III.c" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T4",
+      "tags": ["compliance-aware"]
+    },
+    {
+      "id": "network.observability-all-transfers",
+      "area": "network",
+      "statement": "Private chains and zero-knowledge are allowed only if DTC can review all transfers of Tokens; LedgerScan must be able to view and record transactions. DTC books plus LedgerScan are the official record.",
+      "value": { "dtcCanReviewAllTransfers": true, "scanner": "ledgerscan" },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "section III.c" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T5,T6",
+      "tags": ["observability"]
+    },
+    {
+      "id": "network.technology-standards",
+      "area": "network",
+      "statement": "DTC's blockchain Technology Standards: reliability/resilience/security (availability, performance, outage history, NIST-consistent cybersecurity), compliance-aware support, observability, governance and consensus (no frequent forking or governance uncertainty), priority to chains that scale without large gas-fee variation.",
+      "value": { "standards": ["reliability-resilience-security", "compliance-aware", "observability", "governance-consensus", "stable-fees"] },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "section III.c" },
+        { "url": "https://files.dtcc.com/download/assets/evaluation-framework-l1-l2-blockchain-networks.pdf/8e9c53b2965e11f19a98ca3087bcb34c", "title": "DTCC L1/L2 evaluation framework, updated 2026-08-12", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.2" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.2,2.3-T5",
+      "tags": ["network-screen"]
+    },
+    {
+      "id": "token.no-collateral-value-in-ncd",
+      "area": "token",
+      "statement": "Tokens may not carry collateral or settlement value in DTC's Net Debit Cap or Collateral Monitor; the service is Tier 2 (RTO 4h, RPO 2 min).",
+      "value": { "countsTowardNetDebitCap": false, "tier": 2, "rtoHours": 4, "rpoMinutes": 2 },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "conditions 1, 8" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T9",
+      "tags": ["risk-controls"]
+    },
+    {
+      "id": "operations.free-of-value",
+      "area": "operations",
+      "statement": "DTC token movements are free-of-value. The cash leg is off-DTC (participants use the on-chain cash solution of their choice) and any DvP occurs away from and without involvement by DTC.",
+      "value": { "deliveryMode": "free-of-value", "cashLeg": "participant-choice-off-dtc", "dtcInvolvedInDvp": false },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "section III" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W10",
+      "tags": ["free-of-value"]
+    },
+    {
+      "id": "operations.transfer-and-processing-hours",
+      "area": "operations",
+      "statement": "Same-network transfers run 24/7. Cross-network moves are burn on one chain and mint on the other, only in processing hours 02:00-18:00 ET Monday-Friday; no unsupported bridge protocols. Conversion orders target 15 minutes or less in the same hours.",
+      "value": {
+        "sameNetworkTransfers": "24x7",
+        "crossNetwork": "burn-mint",
+        "processingWindow": { "timezone": "America/New_York", "days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "start": "02:00", "end": "18:00" },
+        "conversionTargetMinutes": 15
+      },
+      "status": "published",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://communications.dtcc.com/rs/669-QIL-921/images/DTCC%20Tokenization%20Service%20At-a-Glance.pdf", "title": "DTCC Tokenization Service At-a-Glance", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T7",
+      "tags": ["hours", "conversion"]
+    },
+    {
+      "id": "operations.conversion-order-status-taxonomy",
+      "area": "operations",
+      "statement": "Conversion order statuses: Pending Approval (Maker/Checker), Processing, Completed, Failed, Declined.",
+      "value": { "statuses": ["Pending Approval", "Processing", "Completed", "Failed", "Declined"], "makerChecker": true },
+      "status": "published",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/conversion_orders.htm", "title": "DTCC Learning Center: conversion orders", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#4.2" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#4.2",
+      "tags": ["conversion", "status-taxonomy"]
+    },
+    {
+      "id": "corporate_actions.phase1-scope",
+      "area": "corporate_actions",
+      "statement": "Phase 1 (Q4 2026) covers record-date cash distributions and maturities on US Treasuries; later phases (2027+) add stock distributions, elections, reorganisations, voting and tax withholding. Non-US tax-withholding participants are excluded.",
+      "value": { "phase1": ["record-date-cash-distribution", "maturity"], "assetClass": "us-treasuries", "later": "2027+" },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/corp_actions_overview.htm", "title": "DTCC Learning Center: corporate actions overview", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-O3",
+      "tags": ["corporate-action"]
+    },
+    {
+      "id": "corporate_actions.cash-credit-consolidated-classic",
+      "area": "corporate_actions",
+      "statement": "DTC computes entitlements from the position capture and credits ONE consolidated cash payment to the participant's classic account across all of its wallets. Interest: tokens stay. Maturity: tokens are automatically burned.",
+      "value": { "payer": "dtc", "payee": "participant-classic-account", "consolidatedAcrossWallets": true, "interestKeepsTokens": true, "maturityBurnsTokens": true },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/corp_actions_workflow.htm", "title": "DTCC Learning Center: corporate actions workflow", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "Position Capture" },
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-O3",
+      "tags": ["corporate-action", "cash-credit"]
+    },
+    {
+      "id": "corporate_actions.unsupported-event-convert-before-record-date",
+      "area": "corporate_actions",
+      "statement": "For events DTC does not support on tokens, the token must be converted to book entry (detokenised) before the record date; DTC does not automatically re-tokenise afterwards.",
+      "value": { "convertToBookEntryBeforeRecordDate": true, "autoRetokenise": false },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/corp_actions_workflow.htm", "title": "DTCC Learning Center: corporate actions workflow", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "'you may reconvert back to classic at any time'" },
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization/hub", "title": "DTCC tokenization hub FAQ", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-O3",
+      "tags": ["corporate-action", "conversion"]
+    },
+    {
+      "id": "corporate_actions.position-capture-8pm-et",
+      "area": "corporate_actions",
+      "statement": "DTC captures positions at 8:00 pm ET on the record date (for maturities, the business day before the maturity date); this is the cutoff for conversions and settlements to count.",
+      "value": { "timezone": "America/New_York", "time": "20:00", "maturityRecordDate": "business-day-before-maturity" },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/corp_actions_workflow.htm", "title": "DTCC Learning Center: corporate actions workflow", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "'Position Capture: Your position is systemically captured by DTC at 8:00 pm ET'" }
+      ],
+      "basis": "The help page states the 8:00 pm ET capture for the live networks. Marked inferred because the instruction for this profile was to treat the capture time as an inference until a human confirms it, and because the exact treatment of holdings acquired, converted or settled around the cutoff was truncated in the text we read and must not be assumed.",
+      "unblockedBy": "Human re-read of corp_actions_workflow.htm in full, plus the Stellar Client Readiness Checklist",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-T6",
+      "tags": ["record-date", "capture"]
+    },
+    {
+      "id": "compliance.quarterly-sec-report-counts",
+      "area": "compliance",
+      "statement": "DTC reports quarterly to SEC staff within 30 days: participants, shares/value tokenized, average daily volume between participants, number of registered wallets, chains used, chains rejected and why, chain outages, root-wallet uses. The chain side must therefore expose these counts.",
+      "value": { "cadence": "quarterly", "dueWithinDays": 30, "items": ["participants", "shares-and-value-tokenized", "adv-between-participants", "registered-wallet-count", "chains-used", "chains-rejected-with-reason", "chain-outages", "root-wallet-uses"] },
+      "status": "published",
+      "confidence": "high",
+      "sources": [
+        { "url": "https://www.sec.gov/files/tm/no-action/dtc-nal-121125.pdf", "title": "SEC no-action letter to DTC, 2025-12-11", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3", "locator": "rep 10" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-O1",
+      "tags": ["reporting"]
+    },
+    {
+      "id": "access.service-accounts-and-environments",
+      "area": "access",
+      "statement": "API access uses service accounts (machine users) with credential rotation that overlaps (Pending Activation / Pending Removal); roles are Participant Member, Super Access Coordinator/Administrator, Affiliate, Representative; environments are PSE (pre-production) and Production; single sign-on and maker-checker are on the roadmap.",
+      "value": {
+        "authModel": "service-account",
+        "rotationOverlap": true,
+        "roles": ["Participant Member", "Super Access Coordinator", "Affiliate", "Representative"],
+        "environments": ["PSE", "Production"]
+      },
+      "status": "published",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/service_accounts.htm", "title": "DTCC Learning Center: service accounts", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" },
+        { "url": "https://dtcclearning.com/helpfiles/dda/tokenization_service/Content/Topics/tokenization_srvc/members.htm", "title": "DTCC Learning Center: members", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#2.3" }
+      ],
+      "noteRef": "dtc_participant_package_and_requirements.md#2.3-W7",
+      "tags": ["access"]
+    }
+  ]
+}

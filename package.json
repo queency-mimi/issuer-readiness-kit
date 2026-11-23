@@ -10,11 +10,16 @@
     "node": ">=22.18"
   },
   "scripts": {
-    "typecheck": "pnpm -r --if-present typecheck",
-    "test": "pnpm -r --if-present test",
-    "lint": "pnpm -r --if-present lint",
-    "check": "pnpm -r --if-present check",
-    "check:all": "bash scripts/check.sh"
+    "lint": "node scripts/dtc-kit/lint.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test \"packages/*/test/*.test.ts\"",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "check:all": "bash scripts/check.sh",
+    "dtc:profiles": "node packages/dtc-kit-profile-spec/src/cli.ts",
+    "dtc:conformance": "node packages/dtc-kit-conformance/src/bin.ts",
+    "dtc:export-pack": "node packages/dtc-kit-conformance/scripts/export-pack.ts",
+    "dtc:sandbox": "node packages/dtc-kit-sandbox/src/server.ts",
+    "dtc:testnet-spike": "node packages/dtc-kit-adapter-stellar-sac/scripts/testnet-spike.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

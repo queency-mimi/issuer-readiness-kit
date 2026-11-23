@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sik:holders-at-ledger:schema:holders-snapshot:1.0.0",
+  "title": "HoldersSnapshot",
+  "description": "Ledger-exact, holder-complete, hash-verifiable record-date snapshot of one Stellar asset. Normative text: holders-at-ledger/SPEC.md section 3. Hash definition: SPEC section 4.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "network", "asset", "at", "holders", "coverage", "reconciliation", "holdersHash", "snapshotHash"],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0", "description": "Semver of this schema. Part of the hash preimage." },
+    "kind": { "const": "HoldersSnapshot" },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "passphrase"],
+      "properties": {
+        "name": { "enum": ["public", "testnet"] },
+        "passphrase": { "type": "string", "minLength": 1 }
+      }
+    },
+    "asset": { "$ref": "#/$defs/asset" },
+    "at": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledgerSequence", "closedAt", "closedAtUnix"],
+      "properties": {
+        "ledgerSequence": { "type": "integer", "minimum": 1, "maximum": 4294967295, "description": "State is the ledger state after this ledger closed." },
+        "closedAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+        "closedAtUnix": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 }
+      }
+    },
+    "holders": {
+      "type": "array",
+      "description": "Sorted ascending by `address` (byte order), unique addresses. Every holder of every in-scope class; zero balances omitted.",
+      "items": { "$ref": "#/$defs/holder" }
+    },
+    "lookThrough": { "$ref": "#/$defs/lookThrough" },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "reconciliation": { "$ref": "#/$defs/reconciliation" },
+    "provenance": {
+      "type": "object",
+      "description": "NOT part of any hash. Generator name/version, generatedAt, requested time, resolver method, baseline, replay range, diagnostics.",
+      "additionalProperties": true
+    },
+    "holdersHash": { "$ref": "#/$defs/hash", "description": "SHA-256 of canonical JSON of `holders` alone." },
+    "snapshotHash": { "$ref": "#/$defs/hash", "description": "SHA-256 of canonical JSON of the document without provenance, holdersHash, snapshotHash." }
+  },
+  "allOf": [
+    {
+      "description": "An excluded holder class can never yield an exact reconciliation (SPEC 3.6).",
+      "if": {
+        "anyOf": [
+          { "properties": { "coverage": { "properties": { "account": { "properties": { "included": { "const": false } }, "required": ["included"] } }, "required": ["account"] } }, "required": ["coverage"] },
+          { "properties": { "coverage": { "properties": { "contract": { "properties": { "included": { "const": false } }, "required": ["included"] } }, "required": ["contract"] } }, "required": ["coverage"] },
+          { "properties": { "coverage": { "properties": { "claimableBalance": { "properties": { "included": { "const": false } }, "required": ["included"] } }, "required": ["claimableBalance"] } }, "required": ["coverage"] },
+          { "properties": { "coverage": { "properties": { "liquidityPool": { "properties": { "included": { "const": false } }, "required": ["included"] } }, "required": ["liquidityPool"] } }, "required": ["coverage"] }
+        ]
+      },
+      "then": { "properties": { "reconciliation": { "properties": { "status": { "not": { "const": "exact" } } } } } }
+    },
+    {
+      "description": "exact requires a reference supply and zero delta.",
+      "if": { "properties": { "reconciliation": { "properties": { "status": { "const": "exact" } }, "required": ["status"] } }, "required": ["reconciliation"] },
+      "then": { "properties": { "reconciliation": { "required": ["referenceSupply", "referenceMethod", "delta"], "properties": { "delta": { "const": "0" } } } } }
+    },
+    {
+      "description": "A contract asset has a contractId and no code/issuer; a classic asset has code and issuer; native has neither.",
+      "properties": {
+        "asset": {
+          "oneOf": [
+            { "properties": { "type": { "const": "native" } }, "not": { "anyOf": [{ "required": ["code"] }, { "required": ["issuer"] }, { "required": ["contractId"] }] } },
+            { "properties": { "type": { "const": "classic" } }, "required": ["code", "issuer"], "not": { "required": ["contractId"] } },
+            { "properties": { "type": { "const": "contract" } }, "required": ["contractId"], "not": { "anyOf": [{ "required": ["code"] }, { "required": ["issuer"] }] } }
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "amount": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,37})$",
+      "description": "Non-negative integer in the asset's base unit (stroops for classic assets), as a decimal string. Never a JSON number."
+    },
+    "signedAmount": { "type": "string", "pattern": "^(0|-?[1-9][0-9]{0,37})$" },
+    "hash": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "strkeyG": { "type": "string", "pattern": "^G[A-Z2-7]{55}$" },
+    "strkeyC": { "type": "string", "pattern": "^C[A-Z2-7]{55}$" },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "canonical", "decimals"],
+      "properties": {
+        "type": { "enum": ["native", "classic", "contract"] },
+        "canonical": { "type": "string", "description": "`native`, `CODE:G...` or `C...`." },
+        "code": { "type": "string", "pattern": "^[A-Za-z0-9]{1,12}$" },
+        "issuer": { "$ref": "#/$defs/strkeyG" },
+        "contractId": { "$ref": "#/$defs/strkeyC" },
+        "decimals": { "type": "integer", "minimum": 0, "maximum": 38, "description": "7 for native and classic assets; read from the contract for contract tokens." }
+      }
+    },
+    "holder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "holderType", "balance"],
+      "properties": {
+        "address": { "type": "string", "pattern": "^[GCBL][A-Z2-7]{55,57}$", "description": "G account, C contract, B claimable balance id, L liquidity pool id (SEP-23 strkeys)." },
+        "holderType": { "enum": ["account", "contract", "claimable_balance", "liquidity_pool"] },
+        "balance": { "$ref": "#/$defs/amount" },
+        "trustlineFlags": { "type": "integer", "minimum": 0, "maximum": 7, "description": "Raw trustline flags: 1 authorized, 2 authorized to maintain liabilities, 4 clawback enabled. Classic trustline holders only." },
+        "claimants": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Claimable balances only.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["destination", "predicateXdr"],
+            "properties": {
+              "destination": { "$ref": "#/$defs/strkeyG" },
+              "predicateXdr": { "type": "string", "description": "Base64 XDR ClaimPredicate." }
+            }
+          }
+        },
+        "poolTotalShares": { "$ref": "#/$defs/amount", "description": "Liquidity pools only: total shares outstanding at this ledger." }
+      },
+      "allOf": [
+        { "if": { "properties": { "holderType": { "const": "account" } } }, "then": { "properties": { "address": { "pattern": "^G" } }, "not": { "anyOf": [{ "required": ["claimants"] }, { "required": ["poolTotalShares"] }] } } },
+        { "if": { "properties": { "holderType": { "const": "contract" } } }, "then": { "properties": { "address": { "pattern": "^C" } }, "not": { "anyOf": [{ "required": ["claimants"] }, { "required": ["poolTotalShares"] }, { "required": ["trustlineFlags"] }] } } },
+        { "if": { "properties": { "holderType": { "const": "claimable_balance" } } }, "then": { "properties": { "address": { "pattern": "^B" } }, "required": ["claimants"] } },
+        { "if": { "properties": { "holderType": { "const": "liquidity_pool" } } }, "then": { "properties": { "address": { "pattern": "^L" } }, "required": ["poolTotalShares"] } }
+      ]
+    },
+    "lookThrough": {
+      "type": "object",
+      "description": "Optional derived view: the reserves held by liquidity pools apportioned to pool-share holders. Included in snapshotHash when present. The base `holders` list is always exact custody and reconciles without it.",
+      "additionalProperties": false,
+      "required": ["method", "pools"],
+      "properties": {
+        "method": { "const": "pro-rata-floor-largest-remainder/1" },
+        "pools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["poolId", "reserve", "totalShares", "shareholders"],
+            "properties": {
+              "poolId": { "type": "string", "pattern": "^L[A-Z2-7]{55}$" },
+              "reserve": { "$ref": "#/$defs/amount" },
+              "totalShares": { "$ref": "#/$defs/amount" },
+              "shareholders": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["address", "shares", "amount"],
+                  "properties": {
+                    "address": { "$ref": "#/$defs/strkeyG" },
+                    "shares": { "$ref": "#/$defs/amount" },
+                    "amount": { "$ref": "#/$defs/amount" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "classCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["included", "count", "sum"],
+      "properties": {
+        "included": { "type": "boolean" },
+        "count": { "type": "integer", "minimum": 0 },
+        "sum": { "$ref": "#/$defs/amount" },
+        "reason": { "type": "string", "minLength": 1, "description": "Required when included is false." }
+      },
+      "if": { "properties": { "included": { "const": false } } },
+      "then": { "required": ["reason"] }
+    },
+    "coverage": {
+      "type": "object",
+      "description": "One entry per holder class. count and sum are derived from `holders` and must match.",
+      "additionalProperties": false,
+      "required": ["account", "contract", "claimableBalance", "liquidityPool"],
+      "properties": {
+        "account": { "$ref": "#/$defs/classCoverage" },
+        "contract": { "$ref": "#/$defs/classCoverage" },
+        "claimableBalance": { "$ref": "#/$defs/classCoverage" },
+        "liquidityPool": { "$ref": "#/$defs/classCoverage" }
+      }
+    },
+    "reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "holdersSum", "checks"],
+      "properties": {
+        "status": { "enum": ["exact", "mismatch", "unreconciled"] },
+        "holdersSum": { "$ref": "#/$defs/amount" },
+        "referenceSupply": { "$ref": "#/$defs/amount" },
+        "referenceMethod": { "enum": ["event_delta", "contract_total_supply", "external_current"] },
+        "delta": { "$ref": "#/$defs/signedAmount", "description": "holdersSum - referenceSupply." },
+        "checks": {
+          "type": "array",
+          "description": "Checks that ran, sorted by id. Free-text diagnostics belong in provenance, not here.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "status"],
+            "properties": {
+              "id": { "enum": ["RC-01", "RC-02", "RC-03", "RC-04", "RC-05", "RC-06"] },
+              "status": { "enum": ["pass", "fail", "skipped"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

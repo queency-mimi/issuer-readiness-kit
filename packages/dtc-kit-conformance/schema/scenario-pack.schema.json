@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/dtc-kit/schema/scenario-pack.schema.json",
+  "title": "ScenarioPack",
+  "description": "A tagged list of titled conformance scenarios with expected results. Owned by dtc-kit/conformance; consumed by token-invariants and preflight-harness (docs/ARCHITECTURE.md contract table). Scenarios are specifications: a pack may be all 'catalogue' (no code yet).",
+  "type": "object",
+  "required": ["packFormat", "packId", "version", "title", "profile", "disclaimer", "scenarios"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "packFormat": { "const": "1" },
+    "packId": { "type": "string", "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$" },
+    "version": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}(\\.[0-9]+)?$" },
+    "title": { "type": "string", "minLength": 1 },
+    "profile": {
+      "type": "string",
+      "description": "profileId whose rows `requiresRows` refer to (rows resolve through `extends`)."
+    },
+    "disclaimer": { "type": "string", "minLength": 1 },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/scenario" }
+    }
+  },
+  "$defs": {
+    "tag": {
+      "enum": ["@published", "@inferred", "@unknown", "@stellar-sac", "@stellar-sep57", "@testnet", "@slow"]
+    },
+    "scenario": {
+      "type": "object",
+      "required": ["id", "title", "area", "tags", "requiresRows", "given", "when", "then", "onUnknown", "status", "ticket"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^SC-[0-9]{3}$" },
+        "title": { "type": "string", "minLength": 8 },
+        "area": { "enum": ["infrastructure", "wallet", "transfer", "conversion", "control", "override", "corporate-action", "stellar", "vendor"] },
+        "tags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/tag" },
+          "description": "At most one trust tag (@published | @inferred | @unknown) and it must equal the weakest status among requiresRows; none when requiresRows is empty."
+        },
+        "requiresRows": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_-]*)+$" },
+          "uniqueItems": true
+        },
+        "onUnknown": {
+          "enum": ["skip", "run-and-label"],
+          "description": "skip: if any required row is unknown, report SKIPPED(unknown-field:<row>), never pass/fail. run-and-label: run anyway and record the observed behaviour with an @unknown label (used to probe our adapters)."
+        },
+        "given": { "type": "array", "items": { "type": "string" } },
+        "when": { "type": "string", "minLength": 1 },
+        "then": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "status": { "enum": ["catalogue", "implemented"] },
+        "ticket": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}-[0-9]{3}$",
+          "description": "Ticket that implements the scenario (or, for implemented ones, the ticket that did)."
+        },
+        "testFile": {
+          "type": "string",
+          "description": "Required when status is implemented: path of the test, relative to the repo root."
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "implemented" } }, "required": ["status"] },
+          "then": { "required": ["testFile"], "properties": { "testFile": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    }
+  }
+}

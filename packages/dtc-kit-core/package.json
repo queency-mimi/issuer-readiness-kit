@@ -1,0 +1,14 @@
+{
+  "name": "@sik/dtc-kit-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Chain-neutral DTC state machines (typed interfaces plus stubs) and the ChainAdapter port.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@sik/dtc-kit-profile-spec": "workspace:*"
+  }
+}

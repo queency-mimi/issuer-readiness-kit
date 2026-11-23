@@ -1,0 +1,27 @@
+{
+  "fixture": "sac-force-transfer/testnet-run.json",
+  "sha256": "9badf40a10adf1c5b7d7ae726275f8523ef30f0da33db0229357efd5e63ae402",
+  "script": "packages/adapter-stellar-sac/scripts/testnet-spike.ts",
+  "sourceKind": "testnet-tx",
+  "sourceUrl": "https://horizon-testnet.stellar.org",
+  "capturedAt": "2026-11-08T09:44:59.524Z",
+  "ledgers": [
+    5621465,
+    5621466,
+    5621467,
+    5621468,
+    5621470,
+    5621471,
+    5621475,
+    5621476,
+    5621477,
+    5621479,
+    5621480,
+    5621484,
+    5621487,
+    5621490,
+    5621491
+  ],
+  "network": "testnet",
+  "notes": "Throwaway keys generated at runtime with Keypair.random(), funded by Friendbot, never stored. Transactions built from StellarSacAdapter plans."
+}

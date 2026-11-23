@@ -1,0 +1,16 @@
+{
+  "name": "@sik/dtc-kit-sandbox",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Mock DTC registry and participant simulator: fake institutions, an own HTTP API shape, five scripted scenarios. DTC-shaped, not DTC-certified.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./browser": "./src/browser.ts"
+  },
+  "dependencies": {
+    "@sik/dtc-kit-core": "workspace:*",
+    "@sik/dtc-kit-profile-spec": "workspace:*"
+  }
+}

@@ -1,0 +1,257 @@
+{
+  "$schema": "../schema/requirements-profile.schema.json",
+  "profileId": "dtc-stellar",
+  "version": "2026-10-31",
+  "title": "DTC tokenization service on Stellar: inferred and unknown rows",
+  "description": "Stellar-specific rows layered on dtc-generic. DTCC has NOT published Stellar requirements (gate G-DTCC). Every row here is inferred or unknown. When DTCC publishes, change this data file and re-run conformance; code does not change.",
+  "disclaimer": "DTC-shaped, not DTC-certified. Every Stellar row in this profile is inferred or unknown: DTCC has published no Stellar wallet, token or API requirements. Do not describe any output built on these rows as DTC-compatible.",
+  "extends": "dtc-generic",
+  "createdAt": "2026-10-31",
+  "rows": [
+    {
+      "id": "network.stellar-availability",
+      "area": "network",
+      "statement": "DTCC's product page lists Stellar (SEP-41) as anticipated in 2027 (the dtcc.com launch release does not name Stellar).",
+      "value": { "network": "stellar", "tokenStandardListed": "SEP-41", "anticipated": "2027" },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization", "title": "DTCC tokenization product page, per-network tiles", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "tile 'Token standard: SEP-41'; 'anticipated in 2027'" },
+        { "url": "https://communications.dtcc.com/rs/669-QIL-921/images/DTCC%20Tokenization%20Service%20At-a-Glance.pdf", "title": "DTCC Tokenization Service At-a-Glance", "tag": "P", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#0" }
+      ],
+      "basis": "The statement is on a marketing-tier product page and in a brochure PDF. It is not a requirement, a participant guide or a dated commitment, and DTCC's NAL says the approved-protocol list will be published separately. Kept inferred under G-DTCC.",
+      "unblockedBy": "DTCC list of supported tokenization protocols/ledgers; Stellar tile moving from 'soon' to live",
+      "noteRef": "dtc_participant_package_and_requirements.md#0.1",
+      "tags": ["stellar", "availability"]
+    },
+    {
+      "id": "token.interface",
+      "area": "token",
+      "statement": "The token interface on Stellar is SEP-41 (transfer, balance, allowance, burn). SEP-41 has no allowlist, freeze or forced transfer; the Stellar Asset Contract implements SEP-41 and SEP-57 extends it.",
+      "value": { "interface": "SEP-41", "sepStatus": "Draft", "sepVersionRead": "0.5.2" },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization", "title": "DTCC tokenization product page", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread" },
+        { "url": "https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0041.md", "title": "SEP-41 Soroban Token Interface, Draft v0.5.2 updated 2026-08-24", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread" }
+      ],
+      "basis": "Names an interface, not a compliance mechanism. The SEP is still Draft, so the tile may change when it revises.",
+      "unblockedBy": "DTCC Stellar participant/wallet guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#0.1,3",
+      "tags": ["stellar", "sep-41"]
+    },
+    {
+      "id": "token.form",
+      "area": "token",
+      "statement": "Which concrete token form DTCC will use on Stellar: classic asset fronted by a SAC, an OpenZeppelin SEP-57 (T-REX) contract token, or a bespoke contract minted by DTC's tokenization engine.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["classic-asset-with-sac", "sep-57-contract-token", "bespoke-sep-41-contract"],
+      "unblockedBy": "DTCC Stellar participant/wallet guide or supported-protocols list",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-1",
+      "tags": ["stellar", "token-form"]
+    },
+    {
+      "id": "distribution_control.mechanism",
+      "area": "distribution_control",
+      "statement": "How 'transferable only to Registered Wallets' is enforced on Stellar. Candidates: classic AUTH_REQUIRED with DTC authorising each trustline (SetTrustLineFlags); SEP-57 identity verifier plus compliance modules; SEP-8 approval server per payment. The compliance mechanism is undecided in public.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["sac-auth-required-trustlines", "sep-57-identity-and-compliance", "sep-8-approval-server"],
+      "unblockedBy": "DTCC Stellar participant/wallet guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.4,3",
+      "tags": ["stellar", "distribution-control"]
+    },
+    {
+      "id": "distribution_control.registration-two-step",
+      "area": "distribution_control",
+      "statement": "If the classic-asset form is used, registering a wallet takes two steps: the participant creates a trustline, then DTC authorises it. Until authorised the wallet cannot receive.",
+      "value": { "steps": ["participant-creates-trustline", "dtc-authorises-trustline"], "applies": "classic-asset-with-sac" },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://developers.stellar.org/docs/tokens/control-asset-access", "title": "SDF docs: control asset access (mirror read in discovery)", "tag": "S", "retrievedAt": "2026-10-29", "via": "discovery-note:dtc_participant_package_and_requirements.md#3" }
+      ],
+      "basis": "Follows from how AUTH_REQUIRED works on classic assets (holder must open the trustline, issuer flips the authorised flag). Applies only if DTCC chooses the classic form.",
+      "unblockedBy": "token.form resolved by DTCC",
+      "noteRef": "dtc_participant_package_and_requirements.md#3",
+      "tags": ["stellar", "classic", "registered-wallet"]
+    },
+    {
+      "id": "token.whole-token-enforcement-stellar",
+      "area": "token",
+      "statement": "Classic assets and the SAC have 7 fixed decimals, so 'no fractional tokens' cannot be enforced by asset flags; a contract token with decimals 0 can enforce it. This favours a contract token.",
+      "value": { "classicSacEnforceable": false, "contractTokenDecimals0Enforceable": true },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://www.dtcc.com/products-and-services/digital-assets/tokenization", "title": "DTCC tokenization product page", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "SEP-41 tile only; whole-token rule is token.whole-tokens-only" }
+      ],
+      "basis": "Stellar protocol knowledge (SAC amounts are i128 with 7 decimals), not re-verified against docs at scaffold time. Ticket DTC-024 tests it on testnet.",
+      "unblockedBy": "Testnet spike DTC-024 and DTCC choice of token form",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.4,3",
+      "tags": ["stellar", "whole-token"]
+    },
+    {
+      "id": "wallet.stellar-address-binding",
+      "area": "wallet",
+      "statement": "Which Stellar address kinds can be a Registered Wallet: G-account, C-contract address, muxed M-address, smart account. DTC does not validate addresses, so any can be typed in; whether DTC's tokenization engine can mint to them is unknown.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["g-account", "c-contract-address", "m-muxed-address", "smart-account"],
+      "unblockedBy": "DTCC Stellar Wallet Solution Provider Connectivity Guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-2",
+      "tags": ["stellar", "registered-wallet", "contract-address"]
+    },
+    {
+      "id": "wallet.contract-address-registrable",
+      "area": "wallet",
+      "statement": "Open question: can a contract (C...) address be a Registered Wallet? It decides whether a DvP escrow or smart account can ever hold DTC tokens. Note a classic payment operation cannot have a contract address as source or destination; SAC transfers to a C-address need the contract to be authorised first under AUTH_REQUIRED.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["yes", "no", "only-smart-accounts-approved-by-dtc"],
+      "unblockedBy": "DTCC Stellar Wallet Solution Provider Connectivity Guide, or an answer from DTCC via SDF's enterprise team (user outreach, G-OUTREACH)",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-2,5",
+      "tags": ["stellar", "contract-address", "dvp"]
+    },
+    {
+      "id": "authorities.force-transfer-mechanism",
+      "area": "authorities",
+      "statement": "How the DTC root override is realised on Stellar. Classic: clawback is a burn, so a force transfer is a clawback plus an issuer payment in one transaction. SEP-57: forced_transfer / recover_balance. SAC: mint, clawback, set_authorized.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["clawback-plus-issuer-payment-one-tx", "sep-57-forced-transfer", "sac-admin-calls"],
+      "unblockedBy": "DTCC token-form decision; whether DTC accepts clawback+payment as 'transaction reversibility'",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-3,3",
+      "tags": ["stellar", "force-transfer", "clawback"]
+    },
+    {
+      "id": "authorities.root-key-holder",
+      "area": "authorities",
+      "statement": "Who holds DTC's 'root wallet' key on Stellar: the classic issuer account, a SAC admin contract, or a SEP-57 operator role, and whether it is multi-signature.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["issuer-account", "sac-admin-contract", "sep-57-operator-role"],
+      "unblockedBy": "DTCC Stellar participant/wallet guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-3,4",
+      "tags": ["stellar", "override"]
+    },
+    {
+      "id": "authorities.chill-freeze-mechanism",
+      "area": "authorities",
+      "statement": "How chill/lock states map to Stellar: classic AUTH_REVOCABLE (revoke authorisation) or AUTHORIZED_TO_MAINTAIN_LIABILITIES; SEP-57 set_address_frozen / freeze_partial_tokens / pause; or a DTCC-side status only with no on-chain effect.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["classic-revoke-authorisation", "sep-57-freeze", "dtcc-side-status-only"],
+      "unblockedBy": "DTCC Stellar participant/wallet guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.4,3",
+      "tags": ["stellar", "chill", "freeze"]
+    },
+    {
+      "id": "events.stellar-event-layout",
+      "area": "events",
+      "statement": "Token events a participant decodes: SEP-41 / CAP-67 transfer, mint, burn, approve topics (optional muxed fields); SEP-57 adds recovery_success, address-frozen, tokens-frozen events.",
+      "value": { "families": ["sep-41-cap-67", "sac-admin", "sep-57"] },
+      "status": "inferred",
+      "confidence": "medium",
+      "sources": [
+        { "url": "https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0057.md", "title": "SEP-57 T-REX, Draft v0.4.0 updated 2026-09-08", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread", "locator": "Events section" }
+      ],
+      "basis": "Standard event layouts are public; whether DTC's admin actions look like normal transfers or distinct events is unknown (events.admin-action-visibility).",
+      "unblockedBy": "events.admin-action-visibility resolved",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-5",
+      "tags": ["stellar", "events"]
+    },
+    {
+      "id": "events.admin-action-visibility",
+      "area": "events",
+      "statement": "Whether a DTC force transfer, clawback or mint is distinguishable on-chain from an ordinary participant transfer, and how LedgerScan's Stellar scanner and retention window work.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["distinct-events", "indistinguishable-from-transfers"],
+      "unblockedBy": "DTCC LedgerScan Stellar scanner documentation (not public)",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-5",
+      "tags": ["stellar", "events", "observability"]
+    },
+    {
+      "id": "network.finality-threshold",
+      "area": "network",
+      "statement": "Confirmation threshold at which DTCC marks a conversion order Completed on Stellar.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "unblockedBy": "DTCC Stellar participant/wallet guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-6",
+      "tags": ["stellar", "finality"]
+    },
+    {
+      "id": "network.fee-payer",
+      "area": "network",
+      "statement": "Who pays Stellar fees and reserves: the participant, DTC for mint transactions, or a sponsor (sponsored reserves, fee-bump).",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "candidates": ["participant", "dtc", "sponsored"],
+      "unblockedBy": "DTCC Stellar participant/wallet guide",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-9",
+      "tags": ["stellar", "fees"]
+    },
+    {
+      "id": "identifiers.cusip-asset-binding",
+      "area": "identifiers",
+      "statement": "How a CUSIP maps to a Stellar asset (asset code + issuer, or contract ID) and which stellar.toml / SEP-1 data is expected. The DTCC Eligible Securities screen lists token and wallet address per chain, so the mapping is DTC-side data.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "unblockedBy": "DTCC Eligible Securities data for Stellar",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-7",
+      "tags": ["stellar", "identifiers"]
+    },
+    {
+      "id": "access.wallet-provider-certification",
+      "area": "access",
+      "statement": "Whether DTCC will certify wallet providers on Stellar, the connectivity handshake in the Wallet Solution Provider Connectivity Guide, and the signature scheme its registry expects.",
+      "value": null,
+      "status": "unknown",
+      "confidence": "none",
+      "sources": [],
+      "unblockedBy": "DTCC Wallet Solution Provider Connectivity Guide (login-gated); a DTCC relationship via SDF or a listed wallet provider",
+      "noteRef": "dtc_participant_package_and_requirements.md#2.6-8",
+      "tags": ["stellar", "wallet-vendor"]
+    },
+    {
+      "id": "distribution_control.sep-8-approval-fit",
+      "area": "distribution_control",
+      "statement": "An issuer-run SEP-8 approval server gates each payment at the issuer. For DTC tokens the issuer role is DTC's tokenization engine, which mints and configures tokens; participants do not run approval servers. Fit is judged poor: SEP-8 is Active but last updated 2022, only SDF's demo wallet has client support in the SDF repos checked, and custody stacks (raw-XDR signing) have no evidenced SEP-8 flow.",
+      "value": { "fit": "poor", "approvalServerOperator": "dtc-if-used-at-all" },
+      "status": "inferred",
+      "confidence": "low",
+      "sources": [
+        { "url": "https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0008.md", "title": "SEP-8 Regulated Assets, Active v1.7.4 updated 2022-02-21", "tag": "P", "retrievedAt": "2026-10-31", "via": "scaffold-reread" }
+      ],
+      "basis": "Judgement from institutional_tooling_gaps.md (client support check was file-path based, weak) and from the NAL statement that DTC, not participants, configures tokens. See readiness-pack/sep8-and-contract-wallets.md.",
+      "unblockedBy": "token.form and distribution_control.mechanism resolved",
+      "noteRef": "institutional_tooling_gaps.md#2",
+      "tags": ["stellar", "sep-8"]
+    }
+  ]
+}

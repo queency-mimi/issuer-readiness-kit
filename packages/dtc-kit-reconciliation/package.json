@@ -1,0 +1,19 @@
+{
+  "name": "@sik/dtc-kit-reconciliation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Participant-side reconciliation: allocate DTC's consolidated cash credit to client sub-ledgers using record-date holders.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./browser": "./src/browser.ts"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.4.0",
+    "@sik/dtc-kit-core": "workspace:*",
+    "@sik/dtc-kit-profile-spec": "workspace:*",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

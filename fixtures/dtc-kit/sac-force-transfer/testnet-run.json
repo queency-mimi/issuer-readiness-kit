@@ -1,0 +1,329 @@
+{
+  "kind": "dtc-kit/testnet-sac-spike",
+  "network": "testnet",
+  "networkPassphrase": "Test SDF Network ; September 2015",
+  "horizon": "https://horizon-testnet.stellar.org",
+  "startedAt": "2026-11-08T09:41:37.056Z",
+  "finishedAt": "2026-11-08T09:44:59.524Z",
+  "asset": {
+    "code": "SBXTKN",
+    "issuer": "GDXRG7AWR6F6VAGFNCJMINZLPPDQK2X7AQRGDZQHUKCRZ6ZY5EBMPPMI"
+  },
+  "accounts": {
+    "issuer": "GDXRG7AWR6F6VAGFNCJMINZLPPDQK2X7AQRGDZQHUKCRZ6ZY5EBMPPMI",
+    "holderA": "GDIUX373A42SV7XG3PZ4ZJ7MPNL5TCV6KQG7IZBMK7BCA3OVWKGAFCGW",
+    "holderB": "GAQXZZOLEV32ZKMU3KMQBEEQIT7LA6QK3E2TYD4UTAJ72YZQ3QXLTPP4",
+    "holderC_noTrustline": "GDHHB5F65WIFN4SEX5TSTASRAZJX64YRMJAMW7FJAITVTY7DRD5TGGTT"
+  },
+  "note": "Throwaway keypairs generated at runtime and discarded; no private key is stored. Accounts and asset are fictional sandbox objects on Stellar testnet. DTC-shaped, not DTC-certified.",
+  "steps": [
+    {
+      "step": "issuer sets AUTH_REQUIRED, AUTH_REVOCABLE, AUTH_CLAWBACK_ENABLED (before any trustline)",
+      "question": "setup",
+      "submittedBy": "issuer",
+      "operations": [
+        "setOptions"
+      ],
+      "hash": "6575b7af19bcf25a1662b37977070187c0923666441fefe69dffd16c3ec0b041",
+      "ledger": 5621465,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAAAQAAAAEAAAAAAAAAAAAAAABq8ESLAAAAAAAAAAEAAAAAAAAABQAAAAAAAAAAAAAAAQAAAAsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATjpAscAAABAHKvA56rCzb/iiAvYikYpFQjn7Yv00B0SlOw18zYNT+CFkQTEkAvxc+ui9ohcjF6GjXSeAhvU+1HOWG40CtrkBQ==",
+      "balancesAfter": {
+        "holderA": "no-trustline",
+        "holderB": "no-trustline",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "holder A opens a trustline (participant step)",
+      "question": "setup",
+      "submittedBy": "holderA",
+      "operations": [
+        "changeTrust"
+      ],
+      "hash": "66e3aeca493f217f9fa2039d8b370c8bdf259fefe553fb6e18d40cedfa254153",
+      "ledger": 5621466,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAA+gAVcbQAAAAAQAAAAEAAAAAAAAAAAAAAABq8ESSAAAAAAAAAAEAAAAAAAAABgAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAsd//////////wAAAAAAAAAB1bKMAgAAAECfX0zTGEaQPx2dtLg2RwlmDu/cBcMBkAVIAJbCMiJLLJhM5qAq4C/suY6+nL1FA0ktlMDSeaaZw1b7hiYFf4MP",
+      "balancesAfter": {
+        "holderA": "0.0000000",
+        "holderB": "no-trustline",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "holder B opens a trustline (participant step)",
+      "question": "setup",
+      "submittedBy": "holderB",
+      "operations": [
+        "changeTrust"
+      ],
+      "hash": "16d7b633818457895213c53664899766e2df88ab9784eda380d80bfc9762d249",
+      "ledger": 5621467,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAAAhfOXLJXesqZTamQCQkET+sHoK2TU8D5SYE/1jMNwuuQAAA+gAVcbTAAAAAQAAAAEAAAAAAAAAAAAAAABq8ESXAAAAAAAAAAEAAAAAAAAABgAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAsd//////////wAAAAAAAAABMNwuuQAAAECQuZKGLcNxoSrZq0BklY94ebg8uy9VJQ38xCttlpsc3OTdj8jCmJbHDmFXpaBXQhE8iVK26Ubh7lDeSI/KkGwK",
+      "balancesAfter": {
+        "holderA": "0.0000000",
+        "holderB": "0.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "DTC allowlists A (adapter plan allowlist-add)",
+      "question": "Does set_trust_line_flags(authorized) on an existing trustline register the wallet on-chain?",
+      "planAction": "allowlist-add",
+      "submittedBy": "issuer",
+      "operations": [
+        "setTrustLineFlags"
+      ],
+      "hash": "56feb9a1ceaaa885d2c932f42602d2ebf0a8b569e2485cbb554ef2028fead5b3",
+      "ledger": 5621468,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAAAgAAAAEAAAAAAAAAAAAAAABq8ESbAAAAAAAAAAEAAAAAAAAAFQAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAAAAAQAAAAAAAAABOOkCxwAAAECgYHvkTiyuSF/2K1opUEtL9wWeq3LXaFoGCRnCymMlVA0UfQW8l6SyhptBULeYNB3HYrh+LZjJV+hMgNZolywN",
+      "balancesAfter": {
+        "holderA": "0.0000000",
+        "holderB": "0.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "DTC allowlists B (adapter plan allowlist-add)",
+      "question": "same",
+      "planAction": "allowlist-add",
+      "submittedBy": "issuer",
+      "operations": [
+        "setTrustLineFlags"
+      ],
+      "hash": "018e2480c6548b543686d630fd632bbcadac27efb999d75c1975d30aba1784c2",
+      "ledger": 5621470,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAAAwAAAAEAAAAAAAAAAAAAAABq8ESjAAAAAAAAAAEAAAAAAAAAFQAAAAAhfOXLJXesqZTamQCQkET+sHoK2TU8D5SYE/1jMNwuuQAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAAAAAQAAAAAAAAABOOkCxwAAAEBA0TWrjhjkj+knHJAX9ZsD/WtyjLK4Q44gEerAwS1r5jy0sB7R8WYarmbLUpcBq9OdXpP2Z65Qn9CK1h21ON4B",
+      "balancesAfter": {
+        "holderA": "0.0000000",
+        "holderB": "0.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "SC-029: DTC tries to allowlist C, which has no trustline",
+      "scenario": "SC-029",
+      "question": "Can DTC authorise a trustline that does not exist yet?",
+      "planAction": "allowlist-add",
+      "submittedBy": "issuer",
+      "operations": [
+        "setTrustLineFlags"
+      ],
+      "hash": "d0977e780e9a397cc73a61dfe7b61f2c6181044668c25ee7df1b1a7258ae0fe8",
+      "ledger": 5621471,
+      "successful": false,
+      "resultCodes": {
+        "transaction": "tx_failed",
+        "operations": [
+          "op_no_trust"
+        ]
+      },
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAABAAAAAEAAAAAAAAAAAAAAABq8ESsAAAAAAAAAAEAAAAAAAAAFQAAAADOcPS+7ZBW8kS/ZymCUQZTf3MRYkDLfKkCJ1nj44j7MwAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAAAAAQAAAAAAAAABOOkCxwAAAEDuTyyQpVvr/Gz6SMJZqI2YLXA6SdFz1K2QErTxJ3cZUVYeilP6NGfWBR/Q96638Eec+tTSRTFQhYhhQBixvJ0N",
+      "balancesAfter": {
+        "holderA": "0.0000000",
+        "holderB": "0.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "DTC mints 10 to A (adapter plan mint = issuer payment)",
+      "question": "mint",
+      "planAction": "mint",
+      "submittedBy": "issuer",
+      "operations": [
+        "payment"
+      ],
+      "hash": "264bf4fa3cf6d86b0513e257050e5365f27a800a8efaddc58a26c3ffcaf8a61e",
+      "ledger": 5621475,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAABQAAAAEAAAAAAAAAAAAAAABq8ES8AAAAAAAAAAEAAAAAAAAAAQAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAABfXhAAAAAAAAAAABOOkCxwAAAEBT+G7XqFLz7P8h69zd1zftjvDE/vBW1WET5N9TEovAMSWNpRD9Shgx+zxAUG5YsYAyUKAHCLcKwncg6FCozUgD",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "0.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "SC-019 main: DTC force-transfers 10 A -> B in one transaction [clawback, payment], issuer signs only",
+      "scenario": "SC-019",
+      "question": "Is clawback + issuer payment in one transaction a transfer without the holder's signature?",
+      "planAction": "force-transfer",
+      "submittedBy": "issuer",
+      "operations": [
+        "clawback",
+        "payment"
+      ],
+      "hash": "c63843557af8ce1c33bf23758845833202da65fed33ac1aa7ad596f4aab63d26",
+      "ledger": 5621476,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAB9AAVcbOAAAABgAAAAEAAAAAAAAAAAAAAABq8ETEAAAAAAAAAAIAAAAAAAAAEwAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAA0Uvv+wc1Kv7m2/PMp+x7V9mKvlQN9GQsV8IgbdWyjAIAAAAABfXhAAAAAAAAAAABAAAAACF85csld6yplNqZAJCQRP6wegrZNTwPlJgT/WMw3C65AAAAAlNCWFRLTgAAAAAAAAAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAAAAF9eEAAAAAAAAAAAE46QLHAAAAQLDhdsqesnxYR+dHDl+JsaHsnGL56OTkHoTbindOr60Tt+fpep0Jz0SGx0BkX65pHlNlAJ32LJzfITPd3W37sgE=",
+      "balancesAfter": {
+        "holderA": "0.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "DTC mints 10 more to A",
+      "question": "setup for the variant",
+      "planAction": "mint",
+      "submittedBy": "issuer",
+      "operations": [
+        "payment"
+      ],
+      "hash": "d394aa0b4c4fb190ae341587881a032f8942279b1dd9a82e010857bef9005d30",
+      "ledger": 5621477,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAABwAAAAEAAAAAAAAAAAAAAABq8ETIAAAAAAAAAAEAAAAAAAAAAQAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAABfXhAAAAAAAAAAABOOkCxwAAAEClh55cGtMx//bdUIj+Dt+9MDSEloK5bnffCd0fidKu9d78pc2OH/PPwtuLqsi5/mr5+E/CYeK3kcr3QpgzbbEN",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "DTC deauthorises B (adapter plan allowlist-remove)",
+      "question": "setup for the variant",
+      "planAction": "allowlist-remove",
+      "submittedBy": "issuer",
+      "operations": [
+        "setTrustLineFlags"
+      ],
+      "hash": "65e87022841f0b8619c5e00d4e201e4b4bf02bcfd7a4f96f2cb8656d20d8a773",
+      "ledger": 5621479,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAACAAAAAEAAAAAAAAAAAAAAABq8ETPAAAAAAAAAAEAAAAAAAAAFQAAAAAhfOXLJXesqZTamQCQkET+sHoK2TU8D5SYE/1jMNwuuQAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAABAAAAAAAAAAAAAAABOOkCxwAAAEA9iWfEmvAQwKDWvwPRwIyj+K+Ve1WiEracVImMmnlFwdZzHKOJv+qmF0yEEsjpJpVeXiz4d/d0Qm86zksc/i0L",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "SC-019 variant: force transfer 10 A -> B while B is deauthorised",
+      "scenario": "SC-019",
+      "question": "If the payment leg fails, does the clawback leg fail too (atomicity)?",
+      "planAction": "force-transfer",
+      "submittedBy": "issuer",
+      "operations": [
+        "clawback",
+        "payment"
+      ],
+      "hash": "d78063812d0fd98a3a11a701bff8aaa6ef854320af85f2db65573d74c01a548b",
+      "ledger": 5621480,
+      "successful": false,
+      "resultCodes": {
+        "transaction": "tx_failed",
+        "operations": [
+          "op_success",
+          "op_not_authorized"
+        ]
+      },
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAB9AAVcbOAAAACQAAAAEAAAAAAAAAAAAAAABq8ETXAAAAAAAAAAIAAAAAAAAAEwAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAA0Uvv+wc1Kv7m2/PMp+x7V9mKvlQN9GQsV8IgbdWyjAIAAAAABfXhAAAAAAAAAAABAAAAACF85csld6yplNqZAJCQRP6wegrZNTwPlJgT/WMw3C65AAAAAlNCWFRLTgAAAAAAAAAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAAAAF9eEAAAAAAAAAAAE46QLHAAAAQILU43oHdW6xO+JZpWFTjurh2DJu1tCYmprNjyRU21nLicV0l8yDfhKUMnnvz80qhsItOMyTXJZynsMIjV38vAM=",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "deny path: holder A pays 1 to deauthorised B",
+      "scenario": "SC-009",
+      "question": "Does the ledger itself refuse a holder transfer to a non-authorised wallet?",
+      "submittedBy": "holderA",
+      "operations": [
+        "payment"
+      ],
+      "hash": "020e7ac12e5a9b977e31b2eaf2747d6e169b1f36e47484651ca1f1cabe0ec0c0",
+      "ledger": 5621484,
+      "successful": false,
+      "resultCodes": {
+        "transaction": "tx_failed",
+        "operations": [
+          "op_not_authorized"
+        ]
+      },
+      "envelopeXdr": "AAAAAgAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAA+gAVcbQAAAAAgAAAAEAAAAAAAAAAAAAAABq8ETqAAAAAAAAAAEAAAAAAAAAAQAAAAAhfOXLJXesqZTamQCQkET+sHoK2TU8D5SYE/1jMNwuuQAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAJiWgAAAAAAAAAAB1bKMAgAAAEA1UdDcpiMDpXVkM+1rhQoRwwbUnYRqSkQS2t5GPUUs3OVGqczAtp5yhLB7hSyXRV0aSHDzGfRwUCBzSiNVMOoD",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "deny path: holder A pays 1 to C (no trustline)",
+      "scenario": "SC-006",
+      "question": "Does the ledger refuse a transfer to an address with no trustline?",
+      "submittedBy": "holderA",
+      "operations": [
+        "payment"
+      ],
+      "hash": "751321f6929860f4960dc90f1cb3d9bd302556a46f8f8c8ddd589bb52b3fdd68",
+      "ledger": 5621487,
+      "successful": false,
+      "resultCodes": {
+        "transaction": "tx_failed",
+        "operations": [
+          "op_no_trust"
+        ]
+      },
+      "envelopeXdr": "AAAAAgAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAA+gAVcbQAAAAAwAAAAEAAAAAAAAAAAAAAABq8ET6AAAAAAAAAAEAAAAAAAAAAQAAAADOcPS+7ZBW8kS/ZymCUQZTf3MRYkDLfKkCJ1nj44j7MwAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAJiWgAAAAAAAAAAB1bKMAgAAAED4BOs1UIWCWrUJDuFfwwzKtPUurMQTa4c6atzlhTZD5u+zrfV8QZr+GOvjqaG2GIz0Y9jjX5LRtJgVmkFHnOUB",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "DTC re-authorises B (adapter plan unrestrict)",
+      "question": "setup",
+      "planAction": "unrestrict",
+      "submittedBy": "issuer",
+      "operations": [
+        "setTrustLineFlags"
+      ],
+      "hash": "0a78e932e08c83692f8df1162eaf67617fca862ebdc01429b149cfa87a36c24e",
+      "ledger": 5621490,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADvE3wWj4vqgMVoksQ3K3vHBWr/BCJh5geihRz7OOkCxwAAA+gAVcbOAAAACgAAAAEAAAAAAAAAAAAAAABq8EUHAAAAAAAAAAEAAAAAAAAAFQAAAAAhfOXLJXesqZTamQCQkET+sHoK2TU8D5SYE/1jMNwuuQAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAAAAAQAAAAAAAAABOOkCxwAAAEDNtBaojUzQAl8c2ZSgPNX3kXUFQEMp8UCX9cJSBKGMEyDPtHmvKlSZBG8jFHbIKKoMc5HrT8vBAitr51xU1RME",
+      "balancesAfter": {
+        "holderA": "10.0000000",
+        "holderB": "10.0000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    },
+    {
+      "step": "SC-031: holder A pays 0.5 tokens to B",
+      "scenario": "SC-031",
+      "question": "Can a classic asset refuse a fractional amount at ledger level?",
+      "submittedBy": "holderA",
+      "operations": [
+        "payment"
+      ],
+      "hash": "3151f2e996dbee6db9b609efd41bd08584b4b883ae39e8fff39ae30f8bbe3627",
+      "ledger": 5621491,
+      "successful": true,
+      "resultCodes": null,
+      "envelopeXdr": "AAAAAgAAAADRS+/7BzUq/ubb88yn7HtX2Yq+VA30ZCxXwiBt1bKMAgAAA+gAVcbQAAAABAAAAAEAAAAAAAAAAAAAAABq8EUOAAAAAAAAAAEAAAAAAAAAAQAAAAAhfOXLJXesqZTamQCQkET+sHoK2TU8D5SYE/1jMNwuuQAAAAJTQlhUS04AAAAAAAAAAAAA7xN8Fo+L6oDFaJLENyt7xwVq/wQiYeYHooUc+zjpAscAAAAAAExLQAAAAAAAAAAB1bKMAgAAAED/LODuBjCINi+nMxcr/91AsSZO0tySHmvmO1nmxkMe5BTbIjlw4hq5+TsmXUWz4lRRZIhHRUgnw5KpyMR3YjAJ",
+      "balancesAfter": {
+        "holderA": "9.5000000",
+        "holderB": "10.5000000",
+        "holderC_noTrustline": "no-trustline"
+      }
+    }
+  ]
+}

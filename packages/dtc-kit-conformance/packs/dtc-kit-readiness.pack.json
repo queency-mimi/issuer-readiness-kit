@@ -1,0 +1,909 @@
+{
+  "$schema": "../schema/scenario-pack.schema.json",
+  "packFormat": "1",
+  "packId": "dtc-kit-readiness",
+  "version": "2026-11-08",
+  "title": "DTC participant readiness scenarios",
+  "profile": "dtc-stellar",
+  "disclaimer": "DTC-shaped, not DTC-certified. Scenarios tagged @inferred or @unknown rest on profile rows that DTCC has not published; results must be labelled accordingly.",
+  "scenarios": [
+    {
+      "id": "SC-000",
+      "title": "Smoke: the sandbox boots and reports the active profile",
+      "area": "infrastructure",
+      "tags": [],
+      "requiresRows": [],
+      "onUnknown": "skip",
+      "given": [
+        "the sandbox server is started with profile dtc-stellar"
+      ],
+      "when": "GET /v1/health",
+      "then": [
+        "status 200",
+        "body.profile is dtc-stellar and body.lineage is [dtc-generic, dtc-stellar]",
+        "response carries the x-dtc-kit-disclaimer header"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-000",
+      "testFile": "packages/dtc-kit-conformance/test/smoke.test.ts"
+    },
+    {
+      "id": "SC-001",
+      "title": "A participant registers a wallet and it completes after OFAC screening and allowlisting",
+      "area": "wallet",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "wallet.only-participants-register",
+        "wallet.registration-ofac-screening",
+        "wallet.registration-status-taxonomy"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "participant SBX-9001 with a service account",
+        "no wallets registered"
+      ],
+      "when": "the participant POSTs /v1/wallets for an internal wallet, then simulated time advances 60 s",
+      "then": [
+        "registration response status is Processing",
+        "afterwards the wallet status is Completed",
+        "the wallet is allowlisted on the sandbox ledger"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-002",
+      "title": "A caller that is not a DTC Participant cannot register a wallet",
+      "area": "wallet",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "wallet.only-participants-register"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a service account that belongs to no participant"
+      ],
+      "when": "it POSTs /v1/wallets",
+      "then": [
+        "status 403 with code NOT_A_PARTICIPANT",
+        "no wallet record is created"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-003",
+      "title": "An OFAC failure leaves the wallet Failed Compliance, not allowlisted and barred from conversion orders",
+      "area": "wallet",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "wallet.registration-ofac-screening",
+        "wallet.registration-status-taxonomy"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a client of SBX-9004 on the sandbox sanctions list (SBX-SDN-0001)"
+      ],
+      "when": "the participant registers that client's wallet and then creates a to-token conversion order",
+      "then": [
+        "wallet status becomes Failed Compliance",
+        "onChainAllowlisted is false",
+        "the order is Declined with reasonCode WALLET_FAILED_COMPLIANCE"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-004",
+      "title": "The registry accepts any address text; DTC does not validate it",
+      "area": "wallet",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "wallet.address-not-validated-by-dtc"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a participant"
+      ],
+      "when": "it registers a wallet whose address is not a well-formed address for the chosen ledger",
+      "then": [
+        "registration is accepted (202)",
+        "the participant, not the registry, bears the consequence (precheck reports the address as unusable on the ledger)"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-005",
+      "title": "A client wallet must carry a client identifier that ties it to a client record",
+      "area": "wallet",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "wallet.account-model"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "participant SBX-9002 with clients C-BIRCH-001..003"
+      ],
+      "when": "it registers a wallet of kind client without clientId, then with an unknown clientId, then with C-BIRCH-001",
+      "then": [
+        "the first two are rejected with 422",
+        "the third is accepted",
+        "the wallets CSV lists the clientId"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-006",
+      "title": "A transfer to an unregistered address is refused",
+      "area": "transfer",
+      "tags": [
+        "@published",
+        "@stellar-sac",
+        "@stellar-sep57"
+      ],
+      "requiresRows": [
+        "token.transfer-only-to-registered-wallets"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a funded Completed wallet",
+        "an address that is not in the registry"
+      ],
+      "when": "the holder transfers 1 token to the unregistered address",
+      "then": [
+        "precheck returns DEST_NOT_REGISTERED",
+        "the transfer fails and the balance is unchanged",
+        "on a chain adapter the failure is a ledger-level rejection, not only a registry check"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-007",
+      "title": "A transfer between two Completed wallets succeeds",
+      "area": "transfer",
+      "tags": [
+        "@published",
+        "@stellar-sac",
+        "@stellar-sep57"
+      ],
+      "requiresRows": [
+        "token.transfer-only-to-registered-wallets",
+        "wallet.registration-status-taxonomy"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "two Completed wallets, the first holding 10 tokens"
+      ],
+      "when": "the first transfers 4 tokens to the second",
+      "then": [
+        "balances are 6 and 4",
+        "both Activity rows exist (Payment, Payment Received)"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-008",
+      "title": "A transfer to a Failed Compliance wallet is refused",
+      "area": "transfer",
+      "tags": [
+        "@published",
+        "@stellar-sac",
+        "@stellar-sep57"
+      ],
+      "requiresRows": [
+        "wallet.registration-status-taxonomy",
+        "token.transfer-only-to-registered-wallets"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a wallet in Failed Compliance",
+        "a funded Completed wallet"
+      ],
+      "when": "a transfer to the Failed Compliance wallet is attempted",
+      "then": [
+        "precheck returns DEST_FAILED_COMPLIANCE",
+        "no tokens move"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-009",
+      "title": "A transfer to a wallet whose DTC authorisation has not landed on-chain is refused",
+      "area": "transfer",
+      "tags": [
+        "@inferred",
+        "@stellar-sac"
+      ],
+      "requiresRows": [
+        "distribution_control.registration-two-step"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "the participant created a trustline but DTC has not yet authorised it"
+      ],
+      "when": "a funded wallet transfers to that address",
+      "then": [
+        "precheck returns DEST_STATUS_NOT_COMPLETED",
+        "ledger-level failure is 'balance is deauthorized'"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-010",
+      "title": "A to-token conversion order mints whole tokens 1:1 into a Completed wallet",
+      "area": "conversion",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "authorities.dtc-initiated-mint-burn",
+        "token.one-to-one-backing"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a Completed wallet and 100 book-entry shares"
+      ],
+      "when": "the participant creates a to-token order for 100 and time advances 15 min",
+      "then": [
+        "order status goes Processing then Completed",
+        "wallet balance is 100 tokens",
+        "classic balance is reduced by 100 shares",
+        "total supply equals total book-entry shares converted"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-011",
+      "title": "A fractional conversion quantity is declined, not rounded",
+      "area": "conversion",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "token.whole-tokens-only"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a Completed wallet"
+      ],
+      "when": "the participant creates a to-token order with quantity \"1.5\"",
+      "then": [
+        "status 422 with reasonCode FRACTIONAL_QUANTITY",
+        "no order is created in Processing"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-019",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-012",
+      "title": "A to-book-entry conversion burns the tokens and credits the classic position",
+      "area": "conversion",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "authorities.dtc-initiated-mint-burn",
+        "wallet.account-model"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a wallet holding 100 tokens"
+      ],
+      "when": "the participant creates a to-book-entry order for 40",
+      "then": [
+        "wallet balance is 60",
+        "classic position increases by 40",
+        "supply decreases by 40"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-013",
+      "title": "An on-chain revert during conversion automatically reverses the ledger changes",
+      "area": "conversion",
+      "tags": [
+        "@published",
+        "@stellar-sac",
+        "@stellar-sep57",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "authorities.dtc-initiated-mint-burn"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a to-token order whose mint transaction is made to fail on-chain (for example the destination trustline is deauthorised)"
+      ],
+      "when": "the order is processed",
+      "then": [
+        "order status is Failed",
+        "classic position is restored exactly",
+        "no token supply was created"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-030"
+    },
+    {
+      "id": "SC-014",
+      "title": "A cross-network move is a burn on one chain and a mint on the other, only inside processing hours",
+      "area": "conversion",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "operations.transfer-and-processing-hours"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "two sandbox ledgers",
+        "simulated clock at Saturday 10:00 ET, then Monday 10:00 ET"
+      ],
+      "when": "a cross-network move is requested at each time",
+      "then": [
+        "Saturday: refused CROSS_NETWORK_OUTSIDE_HOURS",
+        "Monday: burn on source, mint on destination, supply conserved across both",
+        "a same-network transfer works on Saturday"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-015",
+      "title": "A Delivery Order Chill blocks outbound transfers until it is released",
+      "area": "control",
+      "tags": [
+        "@inferred",
+        "@stellar-sac",
+        "@stellar-sep57"
+      ],
+      "requiresRows": [
+        "wallet.control-state-semantics",
+        "wallet.registration-status-taxonomy"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a funded Completed wallet and a Completed counterparty"
+      ],
+      "when": "DTC applies delivery-order-chill, a transfer is attempted, DTC releases, the transfer is retried",
+      "then": [
+        "during the chill the transfer is refused SOURCE_RESTRICTED",
+        "after release it succeeds",
+        "the label on the refusal is @inferred (control effects are our reading)"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-016",
+      "title": "A Global Lock blocks both inbound and outbound activity",
+      "area": "control",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "wallet.control-state-semantics"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a funded Completed wallet"
+      ],
+      "when": "DTC applies global-lock and both an inbound and an outbound transfer are attempted",
+      "then": [
+        "outbound refused SOURCE_RESTRICTED",
+        "inbound refused DEST_RESTRICTED"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-017",
+      "title": "Releasing a control restores the status the wallet had before it",
+      "area": "control",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "wallet.registration-status-taxonomy",
+        "wallet.control-state-semantics"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a Completed wallet"
+      ],
+      "when": "DTC applies a Compliance Lock from the sanctions feed and later releases it",
+      "then": [
+        "status moves Completed -> Compliance Lock -> Completed",
+        "on-chain restriction is applied then removed (effects restrict / unrestrict)"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-018",
+      "title": "The DTC override moves tokens without the holder's signature",
+      "area": "override",
+      "tags": [
+        "@published",
+        "@stellar-sac",
+        "@stellar-sep57"
+      ],
+      "requiresRows": [
+        "authorities.dtc-override-root-wallet"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "two Completed wallets, the first holding 10 tokens, whose holder key is unavailable to the test"
+      ],
+      "when": "DTC ops force-transfer 10 tokens from the first to the second, reason erroneous",
+      "then": [
+        "balances are 0 and 10",
+        "no signature of the first wallet's holder was used",
+        "the second wallet must be a Registered Wallet or the force transfer is refused DEST_NOT_REGISTERED"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-019",
+      "title": "On a classic asset a force transfer is one atomic transaction: clawback plus issuer payment",
+      "area": "override",
+      "tags": [
+        "@unknown",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "authorities.dtc-override-root-wallet",
+        "authorities.force-transfer-mechanism"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "a testnet asset with AUTH_REQUIRED, AUTH_REVOCABLE and AUTH_CLAWBACK_ENABLED set before any trustline exists",
+        "holder A with 10 tokens, holder B with an authorised trustline"
+      ],
+      "when": "the adapter plans a force transfer A -> B of 10 and it is submitted with throwaway testnet keys ; variant: B's trustline is deauthorised",
+      "then": [
+        "main case: one transaction containing [clawback(A,10), payment(issuer->B,10)]; A=0, B=10, supply unchanged",
+        "variant: the whole transaction fails, A still holds 10 (this is why one transaction is required)",
+        "result is labelled @unknown: DTCC has not said this is the mechanism"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-023",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-020",
+      "title": "SEP-57 forced_transfer from a frozen address: record what happens",
+      "area": "override",
+      "tags": [
+        "@unknown",
+        "@stellar-sep57",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "authorities.force-transfer-mechanism",
+        "wallet.control-state-semantics"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "a SEP-57 token on testnet",
+        "address A frozen with set_address_frozen, and a variant with A partially frozen, and a variant with the token paused"
+      ],
+      "when": "the operator calls forced_transfer(A, B, amount)",
+      "then": [
+        "no pass/fail assertion: the outcome of each variant is recorded as a fixture with provenance",
+        "the capability matrix cell for force-transfer is updated from the observation"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-026"
+    },
+    {
+      "id": "SC-021",
+      "title": "A force transfer, clawback and mint are distinguishable on-chain from an ordinary transfer",
+      "area": "override",
+      "tags": [
+        "@unknown",
+        "@stellar-sac",
+        "@stellar-sep57",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "events.admin-action-visibility"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "one ordinary transfer and one admin action per adapter on testnet"
+      ],
+      "when": "the events of both transactions are decoded",
+      "then": [
+        "record the topic layout of each; assert nothing beyond 'decodable'",
+        "capability cell admin-events-distinguishable is updated"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-027"
+    },
+    {
+      "id": "SC-022",
+      "title": "Every root-wallet use is counted for the quarterly SEC report",
+      "area": "override",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "compliance.quarterly-sec-report-counts",
+        "authorities.dtc-override-root-wallet"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "three force transfers (two erroneous, one stolen) in one quarter"
+      ],
+      "when": "the root-wallet-uses summary is requested for that quarter",
+      "then": [
+        "total is 3, by reason {erroneous: 2, stolen: 1}",
+        "a force transfer in the next quarter is not counted"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-023",
+      "title": "Position capture at 20:00 ET includes tokens held then and excludes tokens converted earlier",
+      "area": "corporate-action",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "corporate_actions.position-capture-8pm-et"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a record date in winter and one in summer (DST)",
+        "wallet W holds 100 tokens at 19:59 ET and converts 30 to book entry at 20:01 ET"
+      ],
+      "when": "DTC captures positions for each record date",
+      "then": [
+        "capture instant is 20:00 America/New_York (01:00Z winter+1d, 00:00Z summer+1d)",
+        "W is captured with 100 tokens",
+        "a conversion completed before 20:00 reduces the captured amount"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-024",
+      "title": "For an unsupported event a token converted to book entry before the record date is not captured and not re-tokenised",
+      "area": "corporate-action",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "corporate_actions.unsupported-event-convert-before-record-date",
+        "corporate_actions.position-capture-8pm-et"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "an event DTC does not support on tokens",
+        "a holder converts to book entry the day before the record date"
+      ],
+      "when": "the record date passes",
+      "then": [
+        "the holder's tokens are absent from the token capture",
+        "no automatic re-tokenisation occurs after the event"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-025",
+      "title": "One consolidated cash credit is allocated to client sub-ledgers pro rata to their captured tokens",
+      "area": "corporate-action",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "corporate_actions.cash-credit-consolidated-classic",
+        "wallet.account-model",
+        "corporate_actions.position-capture-8pm-et"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "participant SBX-9002 with clients C-BIRCH-001..003 holding 50, 30 and 20 tokens across five wallets at capture",
+        "a single credit of 100003 cents"
+      ],
+      "when": "the reconciliation allocates the credit",
+      "then": [
+        "allocation uses largest remainder with ties broken by client id, so it is deterministic",
+        "each client's share is within 1 cent of exact pro rata",
+        "internal (house) wallets are allocated to the house sub-ledger"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-033",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-026",
+      "title": "Allocated amounts sum exactly to the credit received: no cent lost or created",
+      "area": "corporate-action",
+      "tags": [
+        "@inferred"
+      ],
+      "requiresRows": [
+        "corporate_actions.cash-credit-consolidated-classic",
+        "wallet.account-model",
+        "corporate_actions.position-capture-8pm-et"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "property test: random holder sets (1..10000 wallets) and credits (0..10^12 cents)"
+      ],
+      "when": "the allocation runs",
+      "then": [
+        "sum of allocations equals the credit, always",
+        "no negative allocation",
+        "same input in any order gives byte-identical output"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-033",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-027",
+      "title": "At maturity the tokens are burned and the cash credit equals principal",
+      "area": "corporate-action",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "corporate_actions.cash-credit-consolidated-classic"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a maturity event for a sandbox Treasury; record date is the business day before maturity (inferred in SC-023, not asserted here)"
+      ],
+      "when": "DTC pays the event",
+      "then": [
+        "token supply goes to zero",
+        "one credit per participant to the classic account",
+        "interest events leave the tokens in place"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-030",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-028",
+      "title": "A credit that differs from the participant's expectation is flagged CREDIT_MISMATCH and not allocated silently",
+      "area": "corporate-action",
+      "tags": [
+        "@published"
+      ],
+      "requiresRows": [
+        "corporate_actions.cash-credit-consolidated-classic"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "an expected credit computed from the participant's own capture",
+        "DTC credits 1 cent less"
+      ],
+      "when": "the reconciliation runs",
+      "then": [
+        "case state is Disputed with disputeCode CREDIT_MISMATCH",
+        "no allocation is posted until a human resolves it"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-034",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-029",
+      "title": "DTC cannot authorise a trustline that does not exist yet",
+      "area": "stellar",
+      "tags": [
+        "@inferred",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "distribution_control.registration-two-step"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a funded testnet account with no trustline to the asset"
+      ],
+      "when": "the adapter's allowlist-add plan is submitted",
+      "then": [
+        "the transaction fails (no trustline)",
+        "precheck reports DEST_NOT_REGISTERED until the participant creates the trustline and DTC authorises it"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-023",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-030",
+      "title": "A contract (C) address as a Registered Wallet: record what each adapter does",
+      "area": "stellar",
+      "tags": [
+        "@unknown",
+        "@stellar-sac",
+        "@stellar-sep57",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "wallet.contract-address-registrable"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "a deployed test contract (a minimal smart account or escrow)"
+      ],
+      "when": "SAC: set_authorized on the contract address then a transfer to it ; SEP-57: add the contract to the identity registry / allowlist then a transfer to it",
+      "then": [
+        "no pass/fail: record whether each step is possible and the exact error otherwise",
+        "the answer is NOT evidence about what DTC will allow; it bounds what the token side can do"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-028"
+    },
+    {
+      "id": "SC-031",
+      "title": "A classic asset or SAC cannot reject a fractional amount at ledger level",
+      "area": "stellar",
+      "tags": [
+        "@inferred",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "token.whole-token-enforcement-stellar"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "an authorised holder with 10 tokens (7 decimals)"
+      ],
+      "when": "the holder pays 0.5 tokens to another authorised holder",
+      "then": [
+        "the payment succeeds on-chain (documenting the limitation)",
+        "the sandbox precheck still reports FRACTIONAL_QUANTITY, so enforcement is registry-side only"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-022",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    },
+    {
+      "id": "SC-032",
+      "title": "A contract token deployed with decimals 0 represents only whole tokens",
+      "area": "stellar",
+      "tags": [
+        "@inferred",
+        "@stellar-sep57",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "token.whole-token-enforcement-stellar"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a SEP-57 token deployed with decimals = 0"
+      ],
+      "when": "decimals() is read and a transfer of 1 and of the smallest unit are made",
+      "then": [
+        "decimals() returns 0",
+        "the smallest transferable unit is one share",
+        "wallet display of the balance is recorded (wallets may assume decimals)"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-022"
+    },
+    {
+      "id": "SC-033",
+      "title": "Wallet vendor: the custody stack signs classic trustline operations and a Soroban auth entry, and shows a control action clearly",
+      "area": "vendor",
+      "tags": [
+        "@unknown",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "access.wallet-provider-certification"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "a vendor test environment with a testnet vault (vendor supplies access; the kit never holds keys)"
+      ],
+      "when": "the vendor stack is driven to: create a trustline, sign a SEP-41 transfer auth entry, display a forced_transfer / SetTrustLineFlags request for approval",
+      "then": [
+        "each capability is reported supported / not supported / not testable, with the evidence",
+        "the result feeds readiness-pack/wallet-vendor-matrix.md; no vendor is named in a pass/fail without its consent (G-OUTREACH)"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-037"
+    },
+    {
+      "id": "SC-034",
+      "title": "Sub-ledger deposits can be attributed with muxed IDs where the stack supports them",
+      "area": "vendor",
+      "tags": [
+        "@unknown",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "wallet.stellar-address-binding"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "one funded account and three muxed IDs for clients C-BIRCH-001..003"
+      ],
+      "when": "classic payments are sent to each muxed address",
+      "then": [
+        "the deposit detector attributes each payment to the right client ID",
+        "record which wallet/custody stacks surface the mux ID"
+      ],
+      "status": "catalogue",
+      "ticket": "DTC-037"
+    },
+    {
+      "id": "SC-035",
+      "title": "Reconcile 10,000 wallets against a HoldersSnapshot within the time budget",
+      "area": "corporate-action",
+      "tags": [
+        "@inferred",
+        "@slow"
+      ],
+      "requiresRows": [
+        "corporate_actions.cash-credit-consolidated-classic",
+        "corporate_actions.position-capture-8pm-et"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "a synthetic HoldersSnapshot of 10,000 holders (shape owned by holders-at-ledger, not redefined here)",
+        "a participant ledger mapping 10,000 wallets to 500 clients"
+      ],
+      "when": "reconciliation allocates one credit",
+      "then": [
+        "completes within 1,000 ms (budget set from measurement on 2026-11-08: 91-134 ms on the 4-core build machine, Node 24.18; see SC035_BUDGET_MS)",
+        "output is identical to the small-case allocation rules"
+      ],
+      "status": "implemented",
+      "ticket": "DTC-035",
+      "testFile": "packages/dtc-kit-conformance/test/scenarios.test.ts"
+    }
+  ]
+}
