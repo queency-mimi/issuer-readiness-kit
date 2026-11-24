@@ -1,0 +1,30 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "muxed.base-unfunded",
+  "title": "Muxed address over a non-existent account",
+  "tags": [
+    "@muxed",
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "MCG4YDLW5JNO3ESJ2BJ5MXX2UYCQYINN66DKXREM2V63C6I2MJD24AAAAAAAAABQHEEHI",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "ACCOUNT_UNFUNDED"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[I] Accounts cannot be created through a muxed address (stellar-preflight docs/codes.md)."
+  },
+  "captured": true
+}

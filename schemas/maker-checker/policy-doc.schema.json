@@ -1,0 +1,496 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/maker-checker/schemas/policy-doc.schema.json",
+  "title": "PolicyDoc v1",
+  "description": "Structural schema only. Sorting, uniqueness of ids, cross-references, role membership, disjoint approval groups and numeric ranges beyond the pattern are semantic checks in SPEC.md section 2.5 (rules PD-001..PD-040) and are NOT expressible here. A document must pass both.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "name",
+    "network",
+    "validity",
+    "principals",
+    "separation",
+    "requestTtlSeconds",
+    "authEntryTtlLedgers",
+    "rules"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "network": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "passphrase"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "testnet",
+            "mainnet"
+          ]
+        },
+        "passphrase": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        }
+      }
+    },
+    "validity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "notBefore",
+        "expiresAt"
+      ],
+      "properties": {
+        "notBefore": {
+          "$ref": "#/$defs/isoTime"
+        },
+        "expiresAt": {
+          "$ref": "#/$defs/isoTime"
+        }
+      }
+    },
+    "principals": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/principal"
+      }
+    },
+    "separation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "makerCannotSign"
+      ],
+      "properties": {
+        "makerCannotSign": {
+          "type": "boolean"
+        }
+      }
+    },
+    "requestTtlSeconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 2592000
+    },
+    "authEntryTtlLedgers": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 17280
+    },
+    "rules": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    },
+    "supersedes": {
+      "$ref": "#/$defs/hex32"
+    }
+  },
+  "$defs": {
+    "hex32": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "isoTime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"
+    },
+    "principalId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{1,63}$"
+    },
+    "gAddress": {
+      "type": "string",
+      "pattern": "^G[A-Z2-7]{55}$"
+    },
+    "cAddress": {
+      "type": "string",
+      "pattern": "^C[A-Z2-7]{55}$"
+    },
+    "gOrCAddress": {
+      "type": "string",
+      "pattern": "^[GC][A-Z2-7]{55}$"
+    },
+    "decimal": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]{0,38})$"
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "label",
+        "roles",
+        "attestation"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/principalId"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "roles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "admin",
+              "checker",
+              "maker"
+            ]
+          }
+        },
+        "address": {
+          "$ref": "#/$defs/gAddress"
+        },
+        "attestation": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "host-asserted",
+              "stellar-sep53"
+            ]
+          }
+        }
+      }
+    },
+    "functionRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,31}$"
+        },
+        "amountArg": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "recipientArg": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15
+        },
+        "recipients": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/gOrCAddress"
+          }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contract",
+        "functions"
+      ],
+      "properties": {
+        "contract": {
+          "$ref": "#/$defs/cAddress"
+        },
+        "functions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/functionRule"
+          }
+        }
+      }
+    },
+    "approvalGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "from"
+      ],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50
+        },
+        "from": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/principalId"
+          }
+        }
+      }
+    },
+    "timeWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "days",
+        "startUtc",
+        "endUtc"
+      ],
+      "properties": {
+        "days": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 7,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri",
+              "sat",
+              "sun"
+            ]
+          }
+        },
+        "startUtc": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        },
+        "endUtc": {
+          "type": "string",
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "effect",
+        "match"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+        },
+        "effect": {
+          "enum": [
+            "allow",
+            "deny"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 400
+        },
+        "match": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "targets"
+          ],
+          "properties": {
+            "targets": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 50,
+              "items": {
+                "$ref": "#/$defs/target"
+              }
+            },
+            "controlKinds": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "forced_transfer",
+                  "freeze",
+                  "pause",
+                  "unfreeze",
+                  "unpause"
+                ]
+              }
+            }
+          }
+        },
+        "makers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/principalId"
+          }
+        },
+        "approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "checkers"
+          ],
+          "properties": {
+            "checkers": {
+              "$ref": "#/$defs/approvalGroup"
+            },
+            "admins": {
+              "$ref": "#/$defs/approvalGroup"
+            }
+          }
+        },
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "perRequest": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 50,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "contract",
+                  "max"
+                ],
+                "properties": {
+                  "contract": {
+                    "$ref": "#/$defs/cAddress"
+                  },
+                  "max": {
+                    "$ref": "#/$defs/decimal"
+                  }
+                }
+              }
+            },
+            "rolling": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 50,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "contract",
+                  "windowSeconds",
+                  "max"
+                ],
+                "properties": {
+                  "contract": {
+                    "$ref": "#/$defs/cAddress"
+                  },
+                  "windowSeconds": {
+                    "type": "integer",
+                    "minimum": 60,
+                    "maximum": 2592000
+                  },
+                  "max": {
+                    "$ref": "#/$defs/decimal"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "windows": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 14,
+          "items": {
+            "$ref": "#/$defs/timeWindow"
+          }
+        },
+        "cooldownSeconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2592000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "effect": {
+                "const": "allow"
+              }
+            },
+            "required": [
+              "effect"
+            ]
+          },
+          "then": {
+            "required": [
+              "makers",
+              "approval"
+            ],
+            "properties": {
+              "makers": true,
+              "approval": true
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "effect": {
+                "const": "deny"
+              }
+            },
+            "required": [
+              "effect"
+            ]
+          },
+          "then": {
+            "properties": {
+              "approval": false,
+              "makers": false,
+              "limits": false,
+              "windows": false,
+              "cooldownSeconds": false
+            }
+          }
+        }
+      ]
+    }
+  }
+}

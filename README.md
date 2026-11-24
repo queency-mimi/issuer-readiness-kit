@@ -25,8 +25,8 @@ The Issuer Readiness Kit is open-source tooling for issuers, transfer agents and
 | Tool | Language | Location | Status |
 |---|---|---|---|
 | dtc-kit | TypeScript | `packages/dtc-kit-*` | In repo: 7 packages, 260 tests passing |
-| preflight-harness | TypeScript | `packages/preflight-harness` | Planned (M3) |
-| maker-checker | TypeScript, Soroban | `packages/maker-checker`, `contracts/rwa-demo` | Planned (M3) |
+| preflight-harness | TypeScript | `packages/preflight-harness` | In repo: 87 tests (1 opt-in skip), read-only |
+| maker-checker | TypeScript, Soroban | `packages/maker-checker`, `contracts/rwa-demo` | In repo: 70 tests; demo contract builds and passes its 4 tests as its own workspace |
 | holders-at-ledger | Rust | `crates/holders-at-ledger-*`, `fork-test/` | Planned (M4) |
 | token-invariants | Rust | `crates/token-invariants-*` | Planned (M5) |
 
@@ -67,6 +67,26 @@ pnpm dtc:conformance run --target testnet-recorded --adapter stellar-sac
 
 Each requirement row carries a trust level: `published` (from a public DTC source), `inferred` (derived from published material) or `unknown`. Every result reports the weakest level behind it, so a pass is never stronger than the requirement it was checked against.
 
+### Wallet receive checks (preflight-harness)
+
+```sh
+pnpm pfh adapters             # the receive-check libraries compared side by side
+pnpm pfh run --out out/pfh    # replay the 29 recorded testnet cases through each library
+pnpm pfh dtc run              # DTC registered-wallet scenarios on the same cases
+```
+
+Read-only: nothing is signed or submitted. Stellar-Preflight is compared only after you clone it yourself with `packages/preflight-harness/scripts/fetch-competitors.sh`.
+
+### Control-action approvals (maker-checker)
+
+```sh
+pnpm mkr policy validate fixtures/maker-checker/policies/example-treasury.policy.json
+pnpm mkr audit verify fixtures/maker-checker/testnet/e2e-audit.jsonl
+pnpm mkr:contract:test        # the demo SEP-57 token (contracts/rwa-demo)
+```
+
+Demo only: testnet, unaudited, never holds keys.
+
 ## Repository layout
 
 ```
@@ -88,7 +108,7 @@ Code lives in `packages/` and `crates/`, prefixed with the tool name. Everything
 - [`MILESTONES.md`](MILESTONES.md): roadmap to the MVP and beyond
 - [`docs/adr/ADR-0001-monorepo.md`](docs/adr/ADR-0001-monorepo.md): why the five tools share one repository
 - [`docs/MIGRATION.md`](docs/MIGRATION.md): where each source file lands, and its move status
-- [`docs/dtc-kit/`](docs/dtc-kit/): dtc-kit specification, architecture, risks and testing
+- [`docs/dtc-kit/`](docs/dtc-kit/), [`docs/preflight-harness/`](docs/preflight-harness/), [`docs/maker-checker/`](docs/maker-checker/): each tool's specification, architecture, risks and testing
 
 ## License
 

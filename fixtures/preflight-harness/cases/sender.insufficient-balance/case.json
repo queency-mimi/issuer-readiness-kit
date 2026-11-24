@@ -1,0 +1,32 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sender.insufficient-balance",
+  "title": "Sender cannot afford the amount",
+  "tags": [
+    "@classic",
+    "@sender-side",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GDLTZTZ2MF6GQQVD4E4MGYYYVRP5PZCU7OMKP63ZWKYP5EX4BVQH3GIX",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GAXDFXJPML3O4YJRP6HYQ5RCG7QZRDZYD6R3PU2WPDXJWTKZ3FRSY42Z"
+  },
+  "expected": {
+    "mustReport": [
+      "SENDER_INSUFFICIENT_ASSET"
+    ],
+    "mustNotReport": [
+      "TRUSTLINE_MISSING"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[P] Sender-side facts must not flip the receive verdict (SAC #10 for contract transfers)."
+  },
+  "captured": true
+}

@@ -1,0 +1,33 @@
+{
+  "name": "@sik/preflight-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Differential test harness for Stellar 'can this destination receive this asset?' libraries, plus a DTC registered-wallet readiness scenario pack. Read-only; never signs or submits.",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "lint": "node scripts/lint.ts",
+    "check-inventory": "node scripts/check-inventory.ts",
+    "pfh": "node src/cli.ts",
+    "export-pack": "node src/cli.ts export-pack --out ../../fixtures/preflight-harness/packs/preflight-harness-dtc-wallet-readiness.pack.json --pack-version 2026-11-08",
+    "seed:testnet": "node scripts/seed-testnet.ts",
+    "demo:data": "node scripts/demo-data.ts",
+    "report": "node src/cli.ts run --out out/ --generated-at 2026-11-08T00:00:00Z"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^17.3.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
+  },
+  "devDependencies": {
+    "stellagate-core": "0.1.1",
+    "stellar-check": "0.1.1"
+  },
+  "bin": {
+    "pfh": "src/cli.ts"
+  }
+}

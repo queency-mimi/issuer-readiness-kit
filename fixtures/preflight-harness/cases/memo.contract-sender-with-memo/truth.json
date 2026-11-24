@@ -1,0 +1,4 @@
+{
+  "kind": "none",
+  "note": "A contract sender pays through Soroban, which carries no memo; nothing to submit."
+}

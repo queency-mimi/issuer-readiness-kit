@@ -1,0 +1,34 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "memo.contract-sender-with-memo",
+  "title": "Contract sender, memo supplied",
+  "tags": [
+    "@memo",
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GBLHTM4K6S5BUVQKOPFSYRNDTCWLE6MQLNSYL6CAI5TEP5JSVBWPP4CD",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "CDMLOFOCZH3EFIV7AR7T4EKRJUVEWEDO7J2XML57JIN6WRNNO7FWPWGV",
+    "memo": {
+      "type": "text",
+      "value": "dep-1"
+    }
+  },
+  "expected": {
+    "mustReport": [
+      "MEMO_UNSUPPORTED_FOR_CONTRACT_SENDER"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[I] Soroban transactions carry no memo (stellagate-core holdability and check.ts)."
+  },
+  "captured": true
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.sender-deauthorised",
+  "title": "SAC transfer from a deauthorised sender",
+  "tags": [
+    "@sac",
+    "@sender-side",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GA3TKHOUIQM637WKMSLNPUP4EYNHM2TYWNNZDC5HRAS3MNHSZEFEMR2W",
+    "asset": {
+      "kind": "contract",
+      "contractId": "CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4"
+    },
+    "amount": "10",
+    "sender": "GB3N2BYR5AGO643BOQPXWV6WVGJ4OYYC7PC3FN46XFVG5YXN5QHLAWXU"
+  },
+  "expected": {
+    "mustReport": [
+      "SAC_SENDER_DEAUTHORIZED"
+    ],
+    "mustNotReport": [
+      "TRUSTLINE_NOT_AUTHORIZED",
+      "SAC_RECIPIENT_DEAUTHORIZED"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[S] Identical #11 to the recipient case: the code does not say which party. A correct tool must read both balances to attribute it. Receive verdict must stay can_receive."
+  },
+  "captured": true
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "classic.line-full",
+  "title": "Amount exceeds trustline room",
+  "tags": [
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GCXP6TV4LYSXV6R6L7ML5PYXYJVMD4TW5HT5AVPEOULZZR76ROFT3TUZ",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "TRUSTLINE_LIMIT_EXCEEDED"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[P] op_line_full (-8), screen_H_P054.md section A."
+  },
+  "captured": true
+}

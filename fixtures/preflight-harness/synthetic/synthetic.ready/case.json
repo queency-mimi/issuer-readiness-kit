@@ -1,0 +1,30 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "synthetic.ready",
+  "title": "Synthetic: authorised trustline with room",
+  "tags": [
+    "@classic",
+    "@synthetic"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GASVYHCTBQCHUOQ5WA7FFQOVSXCXOCOJAADDM3JNMQORLC2LF3AU647P",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GASVYHCTBQCHUOQ5WBQ3JQO4PHQ7KLHMEPONISQK5WADDBERVRE3DTOQ"
+    },
+    "amount": "10",
+    "sender": "GASVYHCTBQCHUOQ5WCTVFHTFPHQ7KLHMEPONISQK5WAHOITOGVE3CLX5"
+  },
+  "expected": {
+    "mustReport": [],
+    "mustNotReport": [
+      "TRUSTLINE_MISSING",
+      "TRUSTLINE_LIMIT_EXCEEDED"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[I] Synthetic copy of classic.ready."
+  },
+  "captured": true
+}

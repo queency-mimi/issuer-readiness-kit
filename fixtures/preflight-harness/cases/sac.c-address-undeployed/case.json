@@ -1,0 +1,30 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.c-address-undeployed",
+  "title": "C address with no contract deployed",
+  "tags": [
+    "@sac",
+    "@testnet",
+    "@not-derivable"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "CDCEZ6UT23XSFFP6YY5BCYDMNFVZ25L6LL7ET4R76GG23IX6CQSF42FR",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "CONTRACT_DESTINATION_MISSING"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[S] Simulation succeeds (a real contract-data write) so tokens would be stranded; only a ledger-entry read detects it. This case separates readers from simulators."
+  },
+  "captured": true
+}

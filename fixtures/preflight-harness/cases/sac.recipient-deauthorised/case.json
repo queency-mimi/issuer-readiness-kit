@@ -1,0 +1,30 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.recipient-deauthorised",
+  "title": "SAC transfer to a deauthorised recipient",
+  "tags": [
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GCZJKUWWBDXD5NPVVKE4FYIRVH2S5BWVMFBK7EUHQ75FJRQEC7HIB6CT",
+    "asset": {
+      "kind": "contract",
+      "contractId": "CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "SAC_RECIPIENT_DEAUTHORIZED"
+    ],
+    "mustNotReport": [
+      "SAC_SENDER_DEAUTHORIZED"
+    ],
+    "verdict": "cannot_receive",
+    "rationale": "[S] Error(Contract, #11) BalanceDeauthorized; PFH-030."
+  },
+  "captured": true
+}

@@ -1,0 +1,6 @@
+{
+  "kind": "horizon-result",
+  "operationResult": "success",
+  "txHash": "f246dc56f291f80dc13de918c120a392d198fe247dc7670bb94d7fb742064f51",
+  "note": "Testnet payment from a throwaway sender; Horizon result tx_success [op_success]."
+}

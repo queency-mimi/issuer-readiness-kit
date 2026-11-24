@@ -1,0 +1,397 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/preflight-harness/schemas/state-snapshot.schema.json",
+  "title": "StateSnapshot v1",
+  "description": "Library-neutral chain state replayed into each library's injection point (SPEC section 2.2). Reads are not atomic across Horizon and RPC.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "network",
+    "ledger",
+    "capturedAt",
+    "accounts",
+    "contracts",
+    "sacBalances",
+    "simulations"
+  ],
+  "properties": {
+    "schema": {
+      "const": "sik.state-snapshot/1"
+    },
+    "network": {
+      "enum": [
+        "testnet",
+        "mainnet"
+      ]
+    },
+    "ledger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "accounts": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^G[A-Z2-7]{55}$"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "balance",
+              "subentryCount",
+              "numSponsoring",
+              "numSponsored",
+              "flags",
+              "data",
+              "trustlines"
+            ],
+            "properties": {
+              "balance": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,18})$"
+              },
+              "subentryCount": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "numSponsoring": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "numSponsored": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "flags": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "authRequired",
+                  "authRevocable",
+                  "authImmutable",
+                  "clawbackEnabled"
+                ],
+                "properties": {
+                  "authRequired": {
+                    "type": "boolean"
+                  },
+                  "authRevocable": {
+                    "type": "boolean"
+                  },
+                  "authImmutable": {
+                    "type": "boolean"
+                  },
+                  "clawbackEnabled": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "data": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9+/]*={0,2}$"
+                }
+              },
+              "trustlines": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "asset",
+                    "balance",
+                    "limit",
+                    "buyingLiabilities",
+                    "sellingLiabilities",
+                    "authorized",
+                    "authorizedToMaintainLiabilities",
+                    "clawbackEnabled"
+                  ],
+                  "properties": {
+                    "asset": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "code",
+                        "issuer"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "issuer": {
+                          "type": "string",
+                          "pattern": "^G[A-Z2-7]{55}$"
+                        }
+                      }
+                    },
+                    "balance": {
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]{0,18})$"
+                    },
+                    "limit": {
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]{0,18})$"
+                    },
+                    "buyingLiabilities": {
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]{0,18})$"
+                    },
+                    "sellingLiabilities": {
+                      "type": "string",
+                      "pattern": "^(0|[1-9][0-9]{0,18})$"
+                    },
+                    "authorized": {
+                      "type": "boolean"
+                    },
+                    "authorizedToMaintainLiabilities": {
+                      "type": "boolean"
+                    },
+                    "clawbackEnabled": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "homeDomain": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^C[A-Z2-7]{55}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "exists",
+          "kind"
+        ],
+        "properties": {
+          "exists": {
+            "type": "boolean"
+          },
+          "kind": {
+            "enum": [
+              "sac",
+              "wasm",
+              null
+            ]
+          },
+          "wraps": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "native"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "kind",
+                  "code",
+                  "issuer"
+                ],
+                "properties": {
+                  "kind": {
+                    "const": "classic"
+                  },
+                  "code": {
+                    "type": "string"
+                  },
+                  "issuer": {
+                    "type": "string",
+                    "pattern": "^G[A-Z2-7]{55}$"
+                  }
+                }
+              }
+            ]
+          },
+          "reads": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "sacBalances": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "amount",
+              "authorized"
+            ],
+            "properties": {
+              "amount": {
+                "type": "string",
+                "pattern": "^(0|[1-9][0-9]{0,18})$"
+              },
+              "authorized": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "simulations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "call",
+          "source",
+          "result"
+        ],
+        "properties": {
+          "call": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "pattern": "^[GC][A-Z2-7]{55}$"
+          },
+          "result": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "ok"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "ok",
+                  "error"
+                ],
+                "properties": {
+                  "ok": {
+                    "const": false
+                  },
+                  "error": {
+                    "type": "string"
+                  },
+                  "contractErrorCode": {
+                    "type": "integer"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "directory": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tags"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "federation": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "account"
+        ],
+        "properties": {
+          "account": {
+            "type": "string",
+            "pattern": "^G[A-Z2-7]{55}$"
+          },
+          "memoType": {
+            "enum": [
+              "text",
+              "id",
+              "hash"
+            ]
+          },
+          "memo": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "networkParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "baseReserveStroops",
+        "baseFeeStroops"
+      ],
+      "properties": {
+        "baseReserveStroops": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,18})$"
+        },
+        "baseFeeStroops": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,18})$"
+        }
+      }
+    }
+  }
+}

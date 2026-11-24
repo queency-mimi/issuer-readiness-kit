@@ -1,0 +1,4 @@
+{
+  "kind": "none",
+  "note": "simulateTransaction failed with a host error that carries no contract error code: HostError: Error(Storage, MissingValue)"
+}

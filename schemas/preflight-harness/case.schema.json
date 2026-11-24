@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/preflight-harness/schemas/case.schema.json",
+  "title": "Case v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "caseId",
+    "title",
+    "tags",
+    "input",
+    "expected",
+    "captured"
+  ],
+  "properties": {
+    "schema": {
+      "const": "sik.case/1"
+    },
+    "caseId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+    },
+    "title": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "@classic",
+          "@native",
+          "@muxed",
+          "@memo",
+          "@sac",
+          "@sep41",
+          "@sep57",
+          "@sep8",
+          "@sender-side",
+          "@testnet",
+          "@mainnet-readonly",
+          "@synthetic",
+          "@not-derivable"
+        ]
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network",
+        "destination",
+        "asset",
+        "amount"
+      ],
+      "properties": {
+        "network": {
+          "enum": [
+            "testnet",
+            "mainnet"
+          ]
+        },
+        "destination": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "not": {
+            "pattern": "^S[A-D][A-Z2-7]{54}$"
+          }
+        },
+        "asset": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "native"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "code",
+                "issuer"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "classic"
+                },
+                "code": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9]{1,12}$"
+                },
+                "issuer": {
+                  "type": "string",
+                  "pattern": "^G[A-Z2-7]{55}$"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "contractId"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "contract"
+                },
+                "contractId": {
+                  "type": "string",
+                  "pattern": "^C[A-Z2-7]{55}$"
+                }
+              }
+            }
+          ]
+        },
+        "amount": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,7})?$"
+        },
+        "sender": {
+          "type": "string",
+          "pattern": "^[GC][A-Z2-7]{55}$"
+        },
+        "memo": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "text",
+                "id",
+                "hash"
+              ]
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mustReport",
+        "verdict",
+        "rationale"
+      ],
+      "properties": {
+        "mustReport": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]+$"
+          }
+        },
+        "mustNotReport": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]+$"
+          }
+        },
+        "verdict": {
+          "enum": [
+            "can_receive",
+            "can_receive_with_warnings",
+            "cannot_receive",
+            "unknown",
+            "undetermined"
+          ]
+        },
+        "rationale": {
+          "type": "string"
+        }
+      }
+    },
+    "captured": {
+      "type": "boolean"
+    }
+  }
+}

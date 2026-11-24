@@ -1,0 +1,23 @@
+{
+  "fixture": "state.json",
+  "capturedAt": "2026-11-08T10:51:02.766Z",
+  "script": "scripts/seed-testnet.ts",
+  "network": "testnet",
+  "source": {
+    "kind": "captured",
+    "urls": [
+      "https://horizon-testnet.stellar.org/",
+      "https://horizon-testnet.stellar.org/accounts/{id}",
+      "https://horizon-testnet.stellar.org/ledgers?order=desc&limit=1",
+      "https://soroban-testnet.stellar.org getLatestLedger",
+      "https://soroban-testnet.stellar.org getVersionInfo"
+    ],
+    "rpcVersion": "30.0.0-13e53516633c3ce1281c7edbacb607107d3a4e55",
+    "protocolVersion": 30,
+    "horizonVersion": "30.0.0-b3ff4119cc99ebcc8048334f5ec64e78c16d1666"
+  },
+  "ledger": 5622283,
+  "readsAreAtomic": false,
+  "containsSecrets": false,
+  "notes": "Seeded on testnet by scripts/seed-testnet.ts with throwaway keys (never stored), then captured read-only: Horizon GET and RPC read methods; simulations use unsigned envelopes. Reads are not atomic across Horizon and RPC. Testnet resets make these addresses dead; the fixture is a dated snapshot."
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "native.unfunded-create-required",
+  "title": "XLM to a non-existent account, amount at least 1 XLM",
+  "tags": [
+    "@native",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GBATKV3OAFMZWEELH2CBXHNWVN6L37DLWUU22SE67EKQPLPAFTUD3IRV",
+    "asset": {
+      "kind": "native"
+    },
+    "amount": "5",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "ACCOUNT_UNFUNDED"
+    ],
+    "mustNotReport": [],
+    "verdict": "can_receive_with_warnings",
+    "rationale": "[I] A payment fails; createAccount succeeds. Libraries warn and recommend createAccount, so the verdict class is warnings, the ledger result for a plain payment is op_no_destination."
+  },
+  "captured": true
+}

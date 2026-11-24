@@ -1,0 +1,12 @@
+seq,at,type,actor,requestId,summary
+4,2026-11-08T10:29:59Z,control.built,maker-alice,,control freeze built for CBOKJQLZUMEMWGRSTI6EPAXKNYBAG2GMA7Y25GYMN64JAMVN35IMGVCI
+5,2026-11-08T10:30:02Z,request.proposed,maker-alice,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,control freeze: FREEZE all balances of GBU5...WAP4 on token CBOK...GVCI (operator GBD4...6UXF)
+6,2026-11-08T10:30:02Z,approval.recorded,checker-bob,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,checker-bob approve (stellar-sep53)
+7,2026-11-08T10:30:02Z,approval.recorded,checker-carol,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,checker-carol approve (stellar-sep53)
+8,2026-11-08T10:30:02Z,approval.recorded,admin-dana,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,admin-dana approve (stellar-sep53)
+9,2026-11-08T10:30:02Z,request.threshold_met,system,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,threshold met; signing from 2026-11-08T10:30:22Z
+10,2026-11-08T10:30:12Z,auth.planned,system,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,"auth plan f0884c7e99f6, 1 slot(s), reason initial"
+11,2026-11-08T10:30:34Z,auth.slot_collected,admin-dana,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,slot f0884c7e99f6846c:0 signed by operator-key
+12,2026-11-08T10:30:42Z,request.signed,checker-carol,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,envelope signed 72213586d5bb
+13,2026-11-08T10:30:54Z,request.submitted,system,a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1,submitted tx be6b6fea7aee ledger 5622041
+# verified head seq 13 hash f35d73387b33b837d3330f6dacd9e187c361866501bad1779fc1b177b215fe38

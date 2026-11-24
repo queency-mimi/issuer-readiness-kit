@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/preflight-harness/schemas/receive-verdict.schema.json",
+  "title": "ReceiveVerdict v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "adapterId",
+    "adapterVersion",
+    "caseId",
+    "verdict",
+    "reasons",
+    "senderSide",
+    "unmapped",
+    "libraryStatus",
+    "raw"
+  ],
+  "properties": {
+    "schema": {
+      "const": "sik.receive-verdict/1"
+    },
+    "adapterId": {
+      "type": "string"
+    },
+    "adapterVersion": {
+      "type": "string"
+    },
+    "caseId": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "can_receive",
+        "can_receive_with_warnings",
+        "cannot_receive",
+        "unknown"
+      ]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "severity",
+          "party",
+          "libraryCode"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]+$"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "blocking"
+            ]
+          },
+          "party": {
+            "enum": [
+              "recipient",
+              "sender",
+              "issuer",
+              "application",
+              "provider",
+              "unspecified"
+            ]
+          },
+          "libraryCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "senderSide": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "severity",
+          "party",
+          "libraryCode"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9_]+$"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "blocking"
+            ]
+          },
+          "party": {
+            "enum": [
+              "recipient",
+              "sender",
+              "issuer",
+              "application",
+              "provider",
+              "unspecified"
+            ]
+          },
+          "libraryCode": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "unmapped": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "libraryStatus": {
+      "type": "string"
+    },
+    "raw": {},
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "message"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "adapter_unavailable",
+            "threw",
+            "timeout"
+          ]
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

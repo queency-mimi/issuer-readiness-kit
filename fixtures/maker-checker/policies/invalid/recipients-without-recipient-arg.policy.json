@@ -1,0 +1,202 @@
+{
+  "version": 1,
+  "id": "example-treasury",
+  "name": "Example treasury and RWA control policy (synthetic addresses)",
+  "network": {
+    "name": "testnet",
+    "passphrase": "Test SDF Network ; September 2015"
+  },
+  "validity": {
+    "notBefore": "2026-11-01T00:00:00Z",
+    "expiresAt": "2027-05-01T00:00:00Z"
+  },
+  "principals": [
+    {
+      "id": "admin-dana",
+      "label": "Dana (policy admin)",
+      "roles": [
+        "admin"
+      ],
+      "address": "GCT4SFIGGZ6AUATKDQUUXF4IXD7IZBHMT2V42GIKHKAA4BTOEAWU63AW",
+      "attestation": [
+        "stellar-sep53"
+      ]
+    },
+    {
+      "id": "checker-bob",
+      "label": "Bob (checker)",
+      "roles": [
+        "checker"
+      ],
+      "address": "GC26LXO4EECGZFQWPYYEI5DMNOYJH6ZFUUG37UYD7P5D6IUKWQ2JZGJA",
+      "attestation": [
+        "stellar-sep53"
+      ]
+    },
+    {
+      "id": "checker-carol",
+      "label": "Carol (checker)",
+      "roles": [
+        "checker"
+      ],
+      "address": "GC26LXO4EECGZFQ5DSQJREC6R2DILSVNCU74NRKJIE4QONZPFZZVMMWV",
+      "attestation": [
+        "stellar-sep53"
+      ]
+    },
+    {
+      "id": "maker-alice",
+      "label": "Alice (maker)",
+      "roles": [
+        "maker"
+      ],
+      "address": "GD53IB7KKJ6PKT2HFJCYUQ4WPHQQXBG62245IGOSEUEHBGQTNVSURXCS",
+      "attestation": [
+        "stellar-sep53"
+      ]
+    }
+  ],
+  "separation": {
+    "makerCannotSign": true
+  },
+  "requestTtlSeconds": 86400,
+  "authEntryTtlLedgers": 720,
+  "rules": [
+    {
+      "id": "allow-rwa-control",
+      "effect": "allow",
+      "description": "SEP-57 control actions on the RWA token need two checkers and one admin, inside business hours, after a one hour cooldown.",
+      "match": {
+        "targets": [
+          {
+            "contract": "CDTSGNX7CHP3Q67DCRIGGLB6BTS2QECBPWIFS2ZZCLKT23VKXWDJQ37D",
+            "functions": [
+              {
+                "name": "forced_transfer",
+                "amountArg": 2,
+                "recipientArg": 1
+              },
+              {
+                "name": "pause"
+              },
+              {
+                "name": "set_address_frozen"
+              },
+              {
+                "name": "unpause"
+              }
+            ]
+          }
+        ],
+        "controlKinds": [
+          "forced_transfer",
+          "freeze",
+          "pause",
+          "unfreeze",
+          "unpause"
+        ]
+      },
+      "makers": [
+        "maker-alice"
+      ],
+      "approval": {
+        "checkers": {
+          "min": 2,
+          "from": [
+            "checker-bob",
+            "checker-carol"
+          ]
+        },
+        "admins": {
+          "min": 1,
+          "from": [
+            "admin-dana"
+          ]
+        }
+      },
+      "windows": [
+        {
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ],
+          "startUtc": "08:00",
+          "endUtc": "18:00"
+        }
+      ],
+      "cooldownSeconds": 3600
+    },
+    {
+      "id": "allow-treasury-transfer",
+      "effect": "allow",
+      "description": "Treasury transfers of the stablecoin to listed recipients; one checker below the per-request cap.",
+      "match": {
+        "targets": [
+          {
+            "contract": "CAEPOV2RAQLOJPMA5A5CTCMDGZEBN35SDJWFXO5VNB5EQIPEJSPI2R7E",
+            "functions": [
+              {
+                "name": "transfer",
+                "amountArg": 2,
+                "recipients": [
+                  "GAWCXXOOLF2GZKVDTKF4FOS6PHX65IERDQ3S63LGLVHIK7JBHSZLDFAB",
+                  "GDFCXXPKRICITBYPSNJVFSDT2SDJGM5NGIYLQPH47NYRY7JPHTOFMS3M"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "makers": [
+        "maker-alice"
+      ],
+      "approval": {
+        "checkers": {
+          "min": 1,
+          "from": [
+            "checker-bob",
+            "checker-carol"
+          ]
+        }
+      },
+      "limits": {
+        "perRequest": [
+          {
+            "contract": "CAEPOV2RAQLOJPMA5A5CTCMDGZEBN35SDJWFXO5VNB5EQIPEJSPI2R7E",
+            "max": "50000000000"
+          }
+        ],
+        "rolling": [
+          {
+            "contract": "CAEPOV2RAQLOJPMA5A5CTCMDGZEBN35SDJWFXO5VNB5EQIPEJSPI2R7E",
+            "windowSeconds": 86400,
+            "max": "200000000000"
+          }
+        ]
+      }
+    },
+    {
+      "id": "deny-rwa-mint-burn",
+      "effect": "deny",
+      "description": "Minting and burning are never done through this layer; they go through the issuer's own process.",
+      "match": {
+        "targets": [
+          {
+            "contract": "CDTSGNX7CHP3Q67DCRIGGLB6BTS2QECBPWIFS2ZZCLKT23VKXWDJQ37D",
+            "functions": [
+              {
+                "name": "burn"
+              },
+              {
+                "name": "mint"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

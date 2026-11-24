@@ -1,0 +1,371 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/maker-checker/schemas/action-request.schema.json",
+  "title": "ActionRequest v1 (and Approval)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "policyHash",
+    "maker",
+    "createdAt",
+    "expiresAt",
+    "kind",
+    "intent",
+    "summary",
+    "unsignedTxXdr",
+    "nonce"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/hex32"
+    },
+    "policyHash": {
+      "$ref": "#/$defs/hex32"
+    },
+    "maker": {
+      "$ref": "#/$defs/principalId"
+    },
+    "createdAt": {
+      "$ref": "#/$defs/isoTime"
+    },
+    "expiresAt": {
+      "$ref": "#/$defs/isoTime"
+    },
+    "kind": {
+      "enum": [
+        "invoke",
+        "control"
+      ]
+    },
+    "controlKind": {
+      "enum": [
+        "forced_transfer",
+        "freeze",
+        "pause",
+        "unfreeze",
+        "unpause"
+      ]
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "networkPassphrase",
+        "source",
+        "contract",
+        "function",
+        "args",
+        "invocationTreeDigest"
+      ],
+      "properties": {
+        "networkPassphrase": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source": {
+          "type": "string",
+          "pattern": "^G[A-Z2-7]{55}$"
+        },
+        "contract": {
+          "type": "string",
+          "pattern": "^C[A-Z2-7]{55}$"
+        },
+        "function": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,31}$"
+        },
+        "args": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/scval"
+          }
+        },
+        "invocationTreeDigest": {
+          "$ref": "#/$defs/hex32"
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "headline",
+        "facts",
+        "tree",
+        "warnings"
+      ],
+      "properties": {
+        "headline": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "string"
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "tree": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "unsignedTxXdr": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+    },
+    "reasonHash": {
+      "$ref": "#/$defs/hex32"
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{16,64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "control"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "controlKind"
+        ],
+        "properties": {
+          "controlKind": true
+        }
+      },
+      "else": {
+        "properties": {
+          "controlKind": false
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "hex32": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "isoTime": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$"
+    },
+    "principalId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{1,63}$"
+    },
+    "scval": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "bool"
+            },
+            "value": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "void"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "u32",
+                "i32"
+              ]
+            },
+            "value": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "u64",
+                "i64",
+                "u128",
+                "i128",
+                "u256",
+                "i256"
+              ]
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^-?(0|[1-9][0-9]*)$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "enum": [
+                "symbol",
+                "string"
+              ]
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "bytes"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^([0-9a-f]{2})*$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "address"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[GC][A-Z2-7]{55}$"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "vec"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/scval"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "value"
+          ],
+          "properties": {
+            "type": {
+              "const": "map"
+            },
+            "value": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "key": {
+                    "$ref": "#/$defs/scval"
+                  },
+                  "value": {
+                    "$ref": "#/$defs/scval"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

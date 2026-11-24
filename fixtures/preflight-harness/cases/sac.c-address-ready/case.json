@@ -1,0 +1,30 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.c-address-ready",
+  "title": "C address with an authorised SAC balance",
+  "tags": [
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "CDUHLMW4EPMSNFREA2RVWD35NHXW56QES7QWFFQGURQ7LTVPJA54DBP4",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [],
+    "mustNotReport": [
+      "CONTRACT_DESTINATION_MISSING",
+      "SAC_BALANCE_NOT_AUTHORIZED"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[S] Simulation OK."
+  },
+  "captured": true
+}

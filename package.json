@@ -10,7 +10,7 @@
     "node": ">=22.18"
   },
   "scripts": {
-    "lint": "node scripts/dtc-kit/lint.ts",
+    "lint": "node scripts/dtc-kit/lint.ts && node packages/preflight-harness/scripts/lint.ts && node packages/preflight-harness/scripts/check-inventory.ts && node packages/maker-checker/scripts/lint.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test \"packages/*/test/*.test.ts\"",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
@@ -19,7 +19,14 @@
     "dtc:conformance": "node packages/dtc-kit-conformance/src/bin.ts",
     "dtc:export-pack": "node packages/dtc-kit-conformance/scripts/export-pack.ts",
     "dtc:sandbox": "node packages/dtc-kit-sandbox/src/server.ts",
-    "dtc:testnet-spike": "node packages/dtc-kit-adapter-stellar-sac/scripts/testnet-spike.ts"
+    "dtc:testnet-spike": "node packages/dtc-kit-adapter-stellar-sac/scripts/testnet-spike.ts",
+    "pfh": "node packages/preflight-harness/src/cli.ts",
+    "pfh:export-pack": "pnpm --filter @sik/preflight-harness export-pack",
+    "pfh:seed-testnet": "pnpm --filter @sik/preflight-harness seed:testnet",
+    "mkr": "node packages/maker-checker/src/cli.ts",
+    "mkr:e2e-testnet": "pnpm --filter @sik/maker-checker e2e:testnet",
+    "mkr:contract:test": "pnpm --filter @sik/maker-checker contract:test",
+    "mkr:contract:build": "pnpm --filter @sik/maker-checker contract:build"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

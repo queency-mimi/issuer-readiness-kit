@@ -1,0 +1,14 @@
+{
+  "fixture": "state.json",
+  "capturedAt": "2026-10-31T00:00:00Z",
+  "script": "scripts/make-synthetic-fixtures.ts",
+  "network": "testnet",
+  "source": {
+    "kind": "synthetic",
+    "urls": []
+  },
+  "ledger": 1,
+  "readsAreAtomic": false,
+  "containsSecrets": false,
+  "notes": "Synthetic: hand-specified state for unit tests. Not captured from any network; never ground truth."
+}

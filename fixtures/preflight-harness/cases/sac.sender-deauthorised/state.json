@@ -1,0 +1,108 @@
+{
+  "schema": "sik.state-snapshot/1",
+  "network": "testnet",
+  "ledger": 5622357,
+  "capturedAt": "2026-11-08T10:57:11.107Z",
+  "accounts": {
+    "GA3TKHOUIQM637WKMSLNPUP4EYNHM2TYWNNZDC5HRAS3MNHSZEFEMR2W": {
+      "balance": "300000000",
+      "subentryCount": 1,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": [
+        {
+          "asset": {
+            "code": "AUTH",
+            "issuer": "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY"
+          },
+          "balance": "0",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": false
+        }
+      ]
+    },
+    "GB3N2BYR5AGO643BOQPXWV6WVGJ4OYYC7PC3FN46XFVG5YXN5QHLAWXU": {
+      "balance": "300000000",
+      "subentryCount": 1,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": [
+        {
+          "asset": {
+            "code": "AUTH",
+            "issuer": "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY"
+          },
+          "balance": "1000000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": false,
+          "authorizedToMaintainLiabilities": false,
+          "clawbackEnabled": false
+        }
+      ]
+    },
+    "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY": {
+      "balance": "300000000",
+      "subentryCount": 0,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": true,
+        "authRevocable": true,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": []
+    }
+  },
+  "contracts": {
+    "CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4": {
+      "exists": true,
+      "kind": "sac",
+      "reads": {
+        "name()": "AUTH:GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY"
+      },
+      "wraps": {
+        "kind": "classic",
+        "code": "AUTH",
+        "issuer": "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY"
+      }
+    }
+  },
+  "sacBalances": {},
+  "simulations": [
+    {
+      "call": "CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4.transfer(GB3N2BYR5AGO643BOQPXWV6WVGJ4OYYC7PC3FN46XFVG5YXN5QHLAWXU, GA3TKHOUIQM637WKMSLNPUP4EYNHM2TYWNNZDC5HRAS3MNHSZEFEMR2W, 100000000)",
+      "source": "GB3N2BYR5AGO643BOQPXWV6WVGJ4OYYC7PC3FN46XFVG5YXN5QHLAWXU",
+      "result": {
+        "ok": false,
+        "error": "HostError: Error(Contract, #11)\n\nEvent log (newest first):\n   0: [Diagnostic Event] contract:CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4, topics:[error, Error(Contract, #11)], data:\"balance is deauthorized\"\n   1: [Diagnostic Event] topics:[fn_call, CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4, transfer], data:[GB3N2BYR5AGO643BOQPXWV6WVGJ4OYYC7PC3FN46XFVG5YXN5QHLAWXU, GA3TKHOUIQM637WKMSLNPUP4EYNHM2TYWNNZDC5HRAS3MNHSZEFEMR2W, 100000000]\n",
+        "contractErrorCode": 11
+      }
+    }
+  ],
+  "networkParams": {
+    "baseReserveStroops": "5000000",
+    "baseFeeStroops": "100"
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "kind": "none",
+  "note": "SEP-29 is enforced by SDKs at submit time, not by the ledger; no payment was submitted."
+}

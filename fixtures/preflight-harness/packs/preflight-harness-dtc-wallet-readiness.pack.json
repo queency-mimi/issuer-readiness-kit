@@ -1,0 +1,313 @@
+{
+  "packFormat": "1",
+  "packId": "preflight-harness-dtc-wallet-readiness",
+  "version": "2026-11-08",
+  "title": "DTC registered-wallet readiness scenarios (preflight-harness)",
+  "profile": "dtc-stellar",
+  "disclaimer": "DTC-shaped, not DTC-certified. Every Stellar row in this profile is inferred or unknown: DTCC has published no Stellar wallet, token or API requirements. Do not describe any output built on these rows as DTC-compatible.",
+  "scenarios": [
+    {
+      "id": "SC-001",
+      "title": "Participant G wallet with an authorised trustline is ready to receive",
+      "area": "wallet",
+      "tags": [
+        "@inferred",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "token.transfer-only-to-registered-wallets",
+        "distribution_control.registration-two-step"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "Classic asset with AUTH_REQUIRED and clawback; wallet funded, trustline created and authorised, reserve covered.",
+        "fixture: preflight-harness case classic.ready-controlled-asset"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is ready"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-002",
+      "title": "Step 1 done (trustline), step 2 pending (DTC authorisation): not ready",
+      "area": "wallet",
+      "tags": [
+        "@inferred",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "distribution_control.registration-two-step"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "Trustline exists but the issuer has not authorised it.",
+        "fixture: preflight-harness case classic.trustline-unauthorized"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "receive reasons include TRUSTLINE_NOT_AUTHORIZED",
+        "DTC readiness reasons include DTC_TRUSTLINE_NOT_AUTHORIZED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-003",
+      "title": "Wallet has not created the trustline: not ready",
+      "area": "wallet",
+      "tags": [
+        "@inferred",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "distribution_control.registration-two-step"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "Funded wallet, no trustline.",
+        "fixture: preflight-harness case classic.trustline-missing"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "receive reasons include TRUSTLINE_MISSING",
+        "DTC readiness reasons include DTC_TRUSTLINE_NOT_CREATED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-004",
+      "title": "DTC does not validate wallet addresses; a mistyped or unfunded address is caught here",
+      "area": "wallet",
+      "tags": [
+        "@published",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "wallet.address-not-validated-by-dtc"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "Well-formed address that does not exist on the ledger.",
+        "fixture: preflight-harness case classic.unfunded-credit-asset"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "receive reasons include ACCOUNT_UNFUNDED",
+        "DTC readiness reasons include DTC_WALLET_UNFUNDED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-005",
+      "title": "Trustline deauthorised or maintain-liabilities-only (possible chill/lock mapping)",
+      "area": "control",
+      "tags": [
+        "@unknown",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "wallet.control-state-semantics",
+        "authorities.chill-freeze-mechanism"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "Wallet was authorised, then authorisation revoked or reduced to maintain-liabilities.",
+        "fixture: preflight-harness case classic.trustline-maintain-liabilities-only"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "receive reasons include TRUSTLINE_MAINTAIN_LIABILITIES_ONLY",
+        "DTC readiness reasons include DTC_WALLET_CONTROL_STATE_ACTIVE"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-006",
+      "title": "Asset has no AUTH_REQUIRED: nothing enforces 'transferable only to Registered Wallets'",
+      "area": "transfer",
+      "tags": [
+        "@unknown",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "token.transfer-only-to-registered-wallets",
+        "distribution_control.mechanism"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "Issuer flags lack AUTH_REQUIRED.",
+        "fixture: preflight-harness case classic.ready"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "DTC readiness reasons include DTC_ASSET_NOT_DISTRIBUTION_CONTROLLED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-007",
+      "title": "Asset has no clawback flag: cannot support the root override on the classic form",
+      "area": "override",
+      "tags": [
+        "@unknown",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "authorities.dtc-override-root-wallet",
+        "authorities.force-transfer-mechanism"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "Issuer without AUTH_CLAWBACK_ENABLED (must be set before trustlines exist).",
+        "fixture: preflight-harness case classic.ready"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "DTC readiness reasons include DTC_ASSET_NO_CLAWBACK"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-008",
+      "title": "Amount is not a whole number of tokens",
+      "area": "conversion",
+      "tags": [
+        "@inferred",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "token.whole-tokens-only",
+        "token.whole-token-enforcement-stellar"
+      ],
+      "onUnknown": "skip",
+      "given": [
+        "Classic asset (7 decimals) and an amount with a fractional part.",
+        "fixture: preflight-harness case classic.ready with amount 10.5"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "DTC readiness reasons include DTC_AMOUNT_NOT_WHOLE_TOKENS"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-009",
+      "title": "C address as Registered Wallet: whether DTC accepts it is unknown",
+      "area": "stellar",
+      "tags": [
+        "@unknown",
+        "@stellar-sac",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "wallet.contract-address-registrable"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "Contract account with an authorised SAC balance.",
+        "fixture: preflight-harness case sac.c-address-ready"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is unknown",
+        "DTC readiness reasons include DTC_WALLET_KIND_NOT_ESTABLISHED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-010",
+      "title": "Muxed M address for a client sub-ledger wallet: registry fit is unknown",
+      "area": "stellar",
+      "tags": [
+        "@unknown",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "wallet.account-model",
+        "wallet.stellar-address-binding"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "Muxed address over a ready base account.",
+        "fixture: preflight-harness case muxed.classic-ready"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is unknown",
+        "DTC readiness reasons include DTC_WALLET_KIND_NOT_ESTABLISHED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-011",
+      "title": "Contract-token form: identity verifier rejects the wallet",
+      "area": "stellar",
+      "tags": [
+        "@unknown",
+        "@stellar-sep57",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "token.form"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "SEP-57 token; destination has no verified identity.",
+        "fixture: preflight-harness case sep57.address-frozen"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "receive reasons include SIMULATION_TRANSFER_FAILED",
+        "DTC readiness reasons include DTC_IDENTITY_NOT_VERIFIED"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    },
+    {
+      "id": "SC-012",
+      "title": "Wallet lacks XLM reserve to add the trustline",
+      "area": "stellar",
+      "tags": [
+        "@unknown",
+        "@testnet"
+      ],
+      "requiresRows": [
+        "network.fee-payer"
+      ],
+      "onUnknown": "run-and-label",
+      "given": [
+        "Funded wallet at its minimum balance; adding a trustline would breach the reserve.",
+        "fixture: preflight-harness case classic.reserve-short"
+      ],
+      "when": "the wallet is checked for ability to receive the asset with preflight-harness (library verdicts plus the DTC readiness evaluator)",
+      "then": [
+        "readiness is not-ready",
+        "receive reasons include TRUSTLINE_MISSING",
+        "DTC readiness reasons include DTC_RESERVE_SHORT"
+      ],
+      "status": "catalogue",
+      "ticket": "PFH-026"
+    }
+  ]
+}

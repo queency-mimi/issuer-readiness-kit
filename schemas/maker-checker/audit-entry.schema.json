@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/maker-checker/schemas/audit-entry.schema.json",
+  "title": "AuditEntry v1",
+  "description": "One line of the JSON Lines audit log. hash = SHA-256(\"sik-mkr/audit/v1\\n\" || JCS(entry without hash)). Chain linkage (prevHash equals previous hash, seq gapless) is checked by code, not by this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "seq", "prevHash", "at", "type", "actor", "data", "hash"],
+  "properties": {
+    "version": { "const": 1 },
+    "seq": { "type": "integer", "minimum": 0 },
+    "prevHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "at": { "type": "string", "pattern": "^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$" },
+    "type": {
+      "enum": [
+        "policy.registered", "request.proposed", "request.policy_denied", "approval.recorded", "request.threshold_met",
+        "auth.planned", "auth.slot_collected", "auth.slot_declined", "request.signed", "request.submitted",
+        "request.submit_failed", "request.rejected", "request.cancelled", "request.expired", "control.built", "audit.checkpoint"
+      ]
+    },
+    "actor": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "requestId": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "policyHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "data": { "type": "object" },
+    "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

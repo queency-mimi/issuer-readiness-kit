@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/maker-checker/schemas/provenance.schema.json",
+  "title": "Fixture provenance v1",
+  "description": "Sits beside every captured fixture as <name>.provenance.json (docs/CONVENTIONS.md, Fixtures).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fixture", "capturedAt", "script", "network", "source", "ledger", "containsSecrets", "notes"],
+  "properties": {
+    "fixture": { "type": "string" },
+    "capturedAt": { "type": "string", "format": "date-time" },
+    "script": { "type": "string" },
+    "scriptCommit": { "type": "string" },
+    "network": { "enum": ["testnet", "mainnet"] },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "url"],
+      "properties": {
+        "kind": { "enum": ["soroban-rpc", "horizon", "synthetic"] },
+        "url": { "type": "string" },
+        "method": { "type": "string" },
+        "protocolVersion": { "type": "integer" },
+        "rpcVersion": { "type": "string" }
+      }
+    },
+    "ledger": { "type": "integer", "minimum": 0 },
+    "containsSecrets": { "const": false },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "synthetic.trustline-missing",
+  "title": "Synthetic: funded destination without a trustline",
+  "tags": [
+    "@classic",
+    "@synthetic"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GASVYHCTBQCHUOQ5WA7FFQOVSXCXOCOJAADDM3JNMQORLC2LF3AU647P",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GASVYHCTBQCHUOQ5WBQ3JQO4PHQ7KLHMEPONISQK5WADDBERVRE3DTOQ"
+    },
+    "amount": "10",
+    "sender": "GASVYHCTBQCHUOQ5WCTVFHTFPHQ7KLHMEPONISQK5WAHOITOGVE3CLX5"
+  },
+  "expected": {
+    "mustReport": [
+      "TRUSTLINE_MISSING"
+    ],
+    "verdict": "cannot_receive",
+    "rationale": "[I] Synthetic copy of classic.trustline-missing for adapter unit tests."
+  },
+  "captured": true
+}

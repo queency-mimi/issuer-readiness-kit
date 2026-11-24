@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/preflight-harness/schemas/ground-truth.schema.json",
+  "title": "GroundTruth v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "operationResult"
+      ],
+      "properties": {
+        "kind": {
+          "const": "horizon-result"
+        },
+        "operationResult": {
+          "enum": [
+            "success",
+            "op_no_destination",
+            "op_no_trust",
+            "op_not_authorized",
+            "op_line_full",
+            "op_underfunded",
+            "other"
+          ]
+        },
+        "txHash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "outcome"
+      ],
+      "properties": {
+        "kind": {
+          "const": "simulation"
+        },
+        "outcome": {
+          "enum": [
+            "ok",
+            "contract-error"
+          ]
+        },
+        "contractErrorCode": {
+          "type": "integer"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "note"
+      ],
+      "properties": {
+        "kind": {
+          "const": "out-of-band"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "none"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  ]
+}

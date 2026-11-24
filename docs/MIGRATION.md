@@ -32,8 +32,16 @@ Each move keeps the tool's recorded evidence byte-identical. Provenance files ke
 | `dtc-kit/scripts/demo-data.ts` | moves with the web console | n/a | planned (M19) |
 | `dtc-kit/fixtures` | `fixtures/dtc-kit/` | n/a | done (M2) |
 | `dtc-kit/*.md`, `dtc-kit/readiness-pack` | `docs/dtc-kit/`, `docs/dtc-kit/readiness-pack/` | n/a | copied (M2); links fixed in M7 |
-| `preflight-harness/{src,test,schemas,fixtures,scripts}` | `packages/preflight-harness`, `schemas/preflight-harness/`, `fixtures/preflight-harness/` | `@sik/preflight-harness` | planned (M3) |
-| `maker-checker/{src,test,schemas,openapi,fixtures,scripts}` | `packages/maker-checker`, `schemas/maker-checker/`, `fixtures/maker-checker/` | `@sik/maker-checker` | planned (M3) |
+| `preflight-harness/{src,test,scripts}` | `packages/preflight-harness` (`test/golden/` stays with the tests) | `@sik/preflight-harness` | done (M3) |
+| `preflight-harness/schemas` | `schemas/preflight-harness/` | n/a | done (M3) |
+| `preflight-harness/fixtures` | `fixtures/preflight-harness/` | n/a | done (M3) |
+| `preflight-harness/*.md`, `docs/FINDINGS-2026-11-08.md` | `docs/preflight-harness/` | n/a | copied (M3); links fixed in M7 |
+| `preflight-harness/web`, `scripts/demo-data.ts` output | `scripts/demo-data.ts` moved with the package; it still writes to `packages/preflight-harness/web/`, re-pointed when the console lands | n/a | planned (M19) |
+| `maker-checker/{src,test,scripts,openapi}` | `packages/maker-checker` (OpenAPI stays beside the server it describes) | `@sik/maker-checker` | done (M3) |
+| `maker-checker/schemas` | `schemas/maker-checker/` | n/a | done (M3) |
+| `maker-checker/fixtures` (incl. `wasm/rwa-demo.wasm`) | `fixtures/maker-checker/` | n/a | done (M3) |
+| `maker-checker/*.md` | `docs/maker-checker/` | n/a | copied (M3); links fixed in M7 |
+| `maker-checker/web`, `scripts/build-demo-data.ts` output | `scripts/build-demo-data.ts` moved with the package; it still writes to `packages/maker-checker/web/`, re-pointed when the console lands | n/a | planned (M19) |
 
 ## Rust (`crates/`, one workspace)
 
@@ -51,7 +59,7 @@ Each move keeps the tool's recorded evidence byte-identical. Provenance files ke
 | Source | Target | Why separate | Status |
 |---|---|---|---|
 | `holders-at-ledger/fork-test` | `fork-test/` | soroban-sdk =29.0.1 | planned (M4) |
-| `maker-checker/contracts/rwa-demo` | `contracts/rwa-demo` | soroban-sdk 25 + OZ =0.7.1 | planned (M3) |
+| `maker-checker/contracts/rwa-demo` | `contracts/rwa-demo` (own `Cargo.lock` and `rust-toolchain.toml` kept) | soroban-sdk 25 + OZ =0.7.1 | done (M3) |
 
 ## Web and docs
 
@@ -59,7 +67,7 @@ Each move keeps the tool's recorded evidence byte-identical. Provenance files ke
 |---|---|---|
 | five `*/web` apps (same stack: Vite 8, React 19, Tailwind v4, kit tokens) | `web/` one console, one section per tool | planned (M19) |
 | `holders-at-ledger/site` (Astro + Starlight) | decide: kit docs site or drop | open |
-| each project's SPEC, ARCHITECTURE, RISKS, TESTING, PRIOR-ART, SOURCES | `docs/<tool>/` | dtc-kit copied (M2); others with their move; links in M7 |
+| each project's SPEC, ARCHITECTURE, RISKS, TESTING, PRIOR-ART, SOURCES | `docs/<tool>/` | dtc-kit (M2), preflight-harness and maker-checker (M3) copied; others with their move; links in M7 |
 
 ## Cross-tool links rewritten on the move
 
@@ -67,7 +75,12 @@ Each move keeps the tool's recorded evidence byte-identical. Provenance files ke
 |---|---|---|---|
 | `packages/dtc-kit-reconciliation/src/holders-source.ts` | `../../../../holders-at-ledger/schemas/holders-snapshot.schema.json` | `schemas/holders-at-ledger/holders-snapshot.schema.json` | done (M2) |
 | `packages/dtc-kit-reconciliation/test/holders-source.test.ts` | holders-at-ledger golden fixture by sibling path | `fixtures/holders-at-ledger/golden/` | done (M2) |
-| `preflight-harness/scripts/demo-data.ts:37`, `test/smoke.test.ts:144` | `../dtc-kit/packages/conformance/schema/scenario-pack.schema.json` | `packages/dtc-kit-conformance/schema/` (then the shared package, M9) | planned (M3) |
+| `preflight-harness/scripts/demo-data.ts:37`, `test/smoke.test.ts:144` | `../dtc-kit/packages/conformance/schema/scenario-pack.schema.json`, skipped when the sibling was absent | `packages/dtc-kit-conformance/schema/scenario-pack.schema.json`, always validated (then the shared package, M9) | done (M3) |
+| `preflight-harness` and `maker-checker` tests and scripts | `fixtures/`, `schemas/` under the project root | `fixtures/<tool>/`, `schemas/<tool>/` at the repo root | done (M3) |
+| `preflight-harness/src/cli.ts` | default `--fixtures fixtures/cases`, relative to the working directory | `fixtures/preflight-harness/cases`, resolved from the module, so `pnpm pfh` works from any directory | done (M3) |
+| `maker-checker/scripts/lib/world.ts`, `package.json` `contract:*` | `fixtures/wasm/rwa-demo.wasm`, `contracts/rwa-demo` | `fixtures/maker-checker/wasm/rwa-demo.wasm`, `contracts/rwa-demo` at the repo root | done (M3) |
+| `fixtures/maker-checker/capture/capture-auth-entries.ts` (MKR-016 stub) | `../../src/errors.ts`, default out `fixtures/auth-entries` | `../../../packages/maker-checker/src/errors.ts`, `fixtures/maker-checker/auth-entries`; `fixtures/**/*.ts` is now typechecked | done (M3) |
+| both tools' `scripts/lint.ts` | walked the project root | walk the package plus `fixtures/<tool>`, `schemas/<tool>`, `docs/<tool>` (and `contracts/rwa-demo` for maker-checker) under their old relative paths, so every rule still applies to the same files | done (M3) |
 
 ## Known doc mismatch carried over (fix in M7)
 

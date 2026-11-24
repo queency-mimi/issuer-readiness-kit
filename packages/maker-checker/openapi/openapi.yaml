@@ -1,0 +1,574 @@
+openapi: 3.1.0
+info:
+  title: maker-checker headless API
+  version: 0.1.0
+  summary: Policy, approval workflow, auth-entry collection and audit log for multi-party Soroban authorisation.
+  description: |
+    Headless. No UI, no key custody: no endpoint accepts a private key, seed or mnemonic, and none
+    returns one. Signing happens in a signer (wallet, KMS/HSM, custody vendor) reached through the
+    SignerAdapter interface (SPEC.md section 9) or out of band.
+    This file is normative for the HTTP shape (SPEC.md section 10). Schemas for the bodies are the
+    JSON Schemas in ../schemas/. DEMO-ONLY until gates G-VALUE and G-CRYPTO open.
+  license:
+    name: Apache-2.0
+    identifier: Apache-2.0
+servers:
+  - url: http://127.0.0.1:8787
+    description: Default local bind. Never bind a public interface without TLS and the authN in SPEC 10.1.
+security:
+  - bearerAuth: []
+tags:
+  - name: policy
+  - name: requests
+  - name: approvals
+  - name: auth
+  - name: control
+  - name: audit
+  - name: meta
+paths:
+  /v1/healthz:
+    get:
+      tags: [meta]
+      operationId: getHealth
+      security: []
+      summary: Liveness and build info.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Health" }
+  /v1/policies:
+    post:
+      tags: [policy]
+      operationId: registerPolicy
+      summary: Validate and register an immutable PolicyDoc. Returns its hash.
+      description: Requires the admin role on the caller (registeredBy must equal the caller when the host authenticates callers). A superseding document needs admin in both versions (SPEC 2.6, MKR-026). Idempotent for an identical document.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [policy]
+              properties:
+                policy: { $ref: "../schemas/policy-doc.schema.json" }
+                registeredBy: { type: string, description: Principal id holding admin. Defaults to the authenticated caller. }
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PolicyRef" }
+        "422": { $ref: "#/components/responses/Violations" }
+    get:
+      tags: [policy]
+      operationId: listPolicies
+      summary: List registered policies (hash, id, name, validity, superseded flag).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/PolicyRef" }
+  /v1/policies/{policyHash}:
+    get:
+      tags: [policy]
+      operationId: getPolicy
+      parameters: [{ $ref: "#/components/parameters/PolicyHash" }]
+      responses:
+        "200":
+          description: The canonical document
+          content:
+            application/json:
+              schema: { $ref: "../schemas/policy-doc.schema.json" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/policies/{policyHash}/evaluate:
+    post:
+      tags: [policy]
+      operationId: evaluatePolicy
+      summary: Dry-run evaluation. Writes nothing to the audit log.
+      parameters: [{ $ref: "#/components/parameters/PolicyHash" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EvaluateBody" }
+      responses:
+        "200":
+          description: Decision
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PolicyDecision" }
+  /v1/requests:
+    post:
+      tags: [requests]
+      operationId: proposeRequest
+      summary: Propose an action. Evaluates policy, records request.proposed or request.policy_denied.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProposeBody" }
+      responses:
+        "201":
+          description: Proposed
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RequestView" }
+        "403":
+          description: Denied by policy (a request.policy_denied entry is appended)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PolicyDecision" }
+    get:
+      tags: [requests]
+      operationId: listRequests
+      parameters:
+        - { name: state, in: query, schema: { $ref: "#/components/schemas/RequestState" } }
+        - { name: maker, in: query, schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 200, default: 50 } }
+        - { name: after, in: query, schema: { type: string }, description: Opaque cursor from the previous page. }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items: { type: array, items: { $ref: "#/components/schemas/RequestView" } }
+                  next: { type: string }
+  /v1/requests/{requestId}:
+    get:
+      tags: [requests]
+      operationId: getRequest
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RequestView" }
+        "404": { $ref: "#/components/responses/NotFound" }
+  /v1/requests/{requestId}/approval-statement:
+    get:
+      tags: [approvals]
+      operationId: getApprovalStatement
+      summary: The exact canonical statement an approver must sign (SEP-53 message) for a decision.
+      parameters:
+        - { $ref: "#/components/parameters/RequestId" }
+        - { name: approver, in: query, required: true, schema: { type: string } }
+        - { name: decision, in: query, required: true, schema: { enum: [approve, reject] } }
+      responses:
+        "200":
+          description: Statement and the message string to sign
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [statement, message]
+                properties:
+                  statement: { type: object }
+                  message: { type: string, description: JCS of the statement. }
+  /v1/requests/{requestId}/approvals:
+    post:
+      tags: [approvals]
+      operationId: recordApproval
+      summary: Record an approve or reject decision with its attestation.
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ApprovalBody" }
+      responses:
+        "200":
+          description: Updated request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RequestView" }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "422": { $ref: "#/components/responses/Rejected" }
+  /v1/requests/{requestId}/cancel:
+    post:
+      tags: [requests]
+      operationId: cancelRequest
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [by], properties: { by: { type: string } } }
+      responses:
+        "200":
+          description: Cancelled
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RequestView" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/requests/{requestId}/auth-plan:
+    post:
+      tags: [auth]
+      operationId: createAuthPlan
+      summary: Simulate in record mode, decode auth entries, return the plan and a portable bundle.
+      description: Only valid in state approved. Re-planning invalidates collected shares.
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      responses:
+        "201":
+          description: Plan and bundle
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [plan, bundle]
+                properties:
+                  plan: { type: object }
+                  bundle: { $ref: "../schemas/auth-bundle.schema.json" }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "502":
+          description: RPC or simulation failure (MKR_E_SIMULATION_FAILED)
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /v1/requests/{requestId}/auth-entries:
+    post:
+      tags: [auth]
+      operationId: submitAuthShare
+      summary: Submit one signed authorisation entry (or share) for a slot.
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slotId, signerId, signedEntryXdr]
+              properties:
+                slotId: { type: string }
+                signerId: { type: string }
+                signedEntryXdr: { type: string }
+      responses:
+        "200":
+          description: Slot status after verification
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [slotId, status, complete]
+                properties:
+                  slotId: { type: string }
+                  status: { enum: [pending, collected, declined, expired] }
+                  complete: { type: boolean, description: True when every slot has enough shares. }
+        "422": { $ref: "#/components/responses/Rejected" }
+  /v1/requests/{requestId}/assemble:
+    post:
+      tags: [auth]
+      operationId: assembleTransaction
+      summary: Merge shares, re-simulate in enforce mode, return the envelope for source-account signing.
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      responses:
+        "200":
+          description: Envelope ready for envelope signatures
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [envelopeXdr, envelopeHash]
+                properties:
+                  envelopeXdr: { type: string }
+                  envelopeHash: { type: string }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "422": { $ref: "#/components/responses/Rejected" }
+  /v1/requests/{requestId}/signatures:
+    post:
+      tags: [auth]
+      operationId: submitEnvelopeSignature
+      summary: Submit an envelope signed by a source-account signer. Moves to signed when the threshold weight is met.
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [signerId, signedEnvelopeXdr]
+              properties:
+                signerId: { type: string }
+                signedEnvelopeXdr: { type: string }
+      responses:
+        "200":
+          description: Updated request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RequestView" }
+        "422": { $ref: "#/components/responses/Rejected" }
+  /v1/requests/{requestId}/submit:
+    post:
+      tags: [requests]
+      operationId: submitRequest
+      summary: Send the fully signed transaction through RPC. Mainnet is blocked unless the server was started with --allow-mainnet-submit (G-VALUE).
+      parameters: [{ $ref: "#/components/parameters/RequestId" }]
+      responses:
+        "200":
+          description: Submitted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RequestView" }
+        "403":
+          description: MKR_E_MAINNET_SUBMIT_BLOCKED
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "409": { $ref: "#/components/responses/Conflict" }
+  /v1/control-actions/build:
+    post:
+      tags: [control]
+      operationId: buildControlAction
+      summary: Build a SEP-57 control action (freeze, unfreeze, forced_transfer, pause, unpause) as a typed invocation plus summary. Does not propose it.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ControlActionBody" }
+      responses:
+        "200":
+          description: Built action
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BuiltControlAction" }
+        "422": { $ref: "#/components/responses/Violations" }
+  /v1/audit:
+    get:
+      tags: [audit]
+      operationId: readAudit
+      parameters:
+        - { name: from, in: query, schema: { type: integer, minimum: 0, default: 0 } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 1000, default: 100 } }
+        - { name: requestId, in: query, schema: { type: string } }
+        - { name: format, in: query, schema: { enum: [json, jsonl, csv], default: json } }
+      responses:
+        "200":
+          description: Entries in seq order
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "../schemas/audit-entry.schema.json" }
+            application/x-ndjson: { schema: { type: string } }
+            text/csv: { schema: { type: string } }
+  /v1/audit/head:
+    get:
+      tags: [audit]
+      operationId: getAuditHead
+      summary: Current head (seq, hash). Anchor this value outside the service (SPEC 8.5).
+      responses:
+        "200":
+          description: Head
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  seq: { type: integer }
+                  hash: { type: string }
+  /v1/audit/verify:
+    post:
+      tags: [audit]
+      operationId: verifyAudit
+      summary: Re-derive every hash and link. Optionally compare with an externally anchored head.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fromSeq: { type: integer, minimum: 0 }
+                trustedPrevHash: { type: string }
+                anchoredHead: { type: object, properties: { seq: { type: integer }, hash: { type: string } } }
+      responses:
+        "200":
+          description: Verification report
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VerifyReport" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Maps to a caller identity that the host binds to a PolicyDoc principal id. Token issuance is out of scope (SPEC 10.1). Approvals additionally carry their own attestation.
+  parameters:
+    PolicyHash:
+      name: policyHash
+      in: path
+      required: true
+      schema: { type: string, pattern: "^[0-9a-f]{64}$" }
+    RequestId:
+      name: requestId
+      in: path
+      required: true
+      schema: { type: string, pattern: "^[0-9a-f]{64}$" }
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Conflict:
+      description: Illegal transition for the current state (MKR_E_TRANSITION_ILLEGAL)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Rejected:
+      description: Input rejected by a guard (MKR_E_SOD_VIOLATION, MKR_E_ATTESTATION_INVALID, MKR_E_AUTH_ENTRY_INVALID, MKR_E_PAYLOAD_MISMATCH, MKR_E_SIMULATION_FAILED, MKR_E_REQUEST_EXPIRED)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+    Violations:
+      description: Validation violations
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [violations]
+            properties:
+              violations:
+                type: array
+                items:
+                  type: object
+                  required: [path, code, message]
+                  properties: { path: { type: string }, code: { type: string }, message: { type: string } }
+  schemas:
+    Health:
+      type: object
+      required: [ok, version]
+      properties:
+        ok: { type: boolean }
+        version: { type: string }
+        mainnetSubmitAllowed: { type: boolean }
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string, description: One of the MKR_E_* codes in SPEC section 12. }
+        message: { type: string }
+        details: { type: object }
+    PolicyRef:
+      type: object
+      required: [policyHash, id, name]
+      properties:
+        policyHash: { type: string }
+        id: { type: string }
+        name: { type: string }
+        notBefore: { type: string }
+        expiresAt: { type: string }
+        supersededBy: { type: string }
+    RequestState:
+      enum: [proposed, approved, signed, submitted, rejected, expired, cancelled]
+    EvaluateBody:
+      type: object
+      description: Either `intent` (the service simulates it on the RPC and evaluates the real authorised tree) or `nodes` (an already flattened tree; evaluated offline).
+      required: [maker]
+      properties:
+        maker: { type: string }
+        intent: { type: object, properties: { contract: { type: string }, function: { type: string }, args: { type: array, items: { type: object } }, source: { type: string } } }
+        nodes: { type: array, items: { type: object } }
+        controlKind: { enum: [forced_transfer, freeze, pause, unfreeze, unpause] }
+        now: { type: string, format: date-time }
+    ProposeBody:
+      type: object
+      description: Exactly one of `intent` or `control`. With `control` the service builds the SEP-57 invocation itself (SPEC 6) and records control.built before proposing.
+      required: [policyHash, maker]
+      properties:
+        control:
+          type: object
+          required: [source, params]
+          properties:
+            source: { type: string, description: Transaction source (fee payer). }
+            params: { $ref: "#/components/schemas/ControlActionBody" }
+        policyHash: { type: string }
+        maker: { type: string }
+        reason: { type: string, description: Stored hashed in the audit log. }
+        controlKind: { enum: [forced_transfer, freeze, pause, unfreeze, unpause] }
+        intent:
+          type: object
+          description: contract, function, args (typed ScVal JSON), source account. The service builds and simulates the transaction itself; the maker does not supply XDR.
+          required: [contract, function, args, source]
+          properties:
+            contract: { type: string }
+            function: { type: string }
+            args: { type: array, items: { type: object } }
+            source: { type: string }
+    ApprovalBody:
+      type: object
+      required: [approver, decision, at, nonce, attestation]
+      properties:
+        approver: { type: string }
+        decision: { enum: [approve, reject] }
+        at: { type: string }
+        nonce: { type: string }
+        attestation:
+          oneOf:
+            - type: object
+              required: [scheme, address, signatureBase64]
+              properties:
+                scheme: { const: stellar-sep53 }
+                address: { type: string }
+                signatureBase64: { type: string }
+            - type: object
+              required: [scheme, assertedBy]
+              properties:
+                scheme: { const: host-asserted }
+                assertedBy: { type: string }
+    PolicyDecision:
+      type: object
+      required: [outcome, policyHash, matchedRuleIds, reasons]
+      properties:
+        outcome: { enum: [allow, deny] }
+        policyHash: { type: string }
+        matchedRuleIds: { type: array, items: { type: string } }
+        reasons: { type: array, items: { type: string } }
+        requirement: { type: object }
+    RequestView:
+      type: object
+      required: [request, state, approvals, version]
+      properties:
+        request: { $ref: "../schemas/action-request.schema.json" }
+        state: { $ref: "#/components/schemas/RequestState" }
+        approvals: { type: array, items: { type: object } }
+        thresholdMetAt: { type: string }
+        signingEligibleAt: { type: string }
+        txHash: { type: string }
+        version: { type: integer }
+    ControlActionBody:
+      type: object
+      required: [kind, token]
+      properties:
+        kind: { enum: [freeze, unfreeze, forced_transfer, pause, unpause] }
+        token: { type: string }
+        operator: { type: string }
+        caller: { type: string }
+        userAddress: { type: string }
+        from: { type: string }
+        to: { type: string }
+        amount: { type: string, description: Base units, decimal digits. }
+    BuiltControlAction:
+      type: object
+      required: [controlKind, function, args, summary]
+      properties:
+        controlKind: { type: string }
+        function: { type: string }
+        args: { type: array, items: { type: object } }
+        summary: { type: object }
+    VerifyReport:
+      type: object
+      required: [ok, entries]
+      properties:
+        ok: { type: boolean }
+        entries: { type: integer }
+        head: { type: object }
+        failure: { type: object }

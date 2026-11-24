@@ -1,0 +1,29 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.asset-sac-not-deployed",
+  "title": "Classic asset whose SAC is not deployed, C destination",
+  "tags": [
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "CDUHLMW4EPMSNFREA2RVWD35NHXW56QES7QWFFQGURQ7LTVPJA54DBP4",
+    "asset": {
+      "kind": "classic",
+      "code": "NOSAC",
+      "issuer": "GCHHL4KL3NJFHDHYNRPGPHBMTIZ26HT6456OMZGKRHUV7SBSENPGK224"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "SAC_NOT_DEPLOYED"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[I] stellar-preflight and stellagate-core both read the SAC instance key; PFH-030 records what simulation says."
+  },
+  "captured": true
+}

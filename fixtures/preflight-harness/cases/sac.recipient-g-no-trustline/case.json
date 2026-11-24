@@ -1,0 +1,28 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.recipient-g-no-trustline",
+  "title": "SAC transfer to a G without a trustline",
+  "tags": [
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GDD37WYPOYBJKO57Q3KW7L6KQ7BIDWXQMV5VDNDN7XLLUIORQ4UYDBIT",
+    "asset": {
+      "kind": "contract",
+      "contractId": "CDMLOFOCZH3EFIV7AR7T4EKRJUVEWEDO7J2XML57JIN6WRNNO7FWPWGV"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "TRUSTLINE_MISSING"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[S] Error(Contract, #13) in the discovery agent's mainnet run; re-verify with PFH-030."
+  },
+  "captured": true
+}

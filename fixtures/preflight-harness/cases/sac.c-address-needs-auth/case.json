@@ -1,0 +1,29 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.c-address-needs-auth",
+  "title": "C address without a balance, issuer AUTH_REQUIRED",
+  "tags": [
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "CDUHLMW4EPMSNFREA2RVWD35NHXW56QES7QWFFQGURQ7LTVPJA54DBP4",
+    "asset": {
+      "kind": "classic",
+      "code": "AUTH",
+      "issuer": "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "SAC_BALANCE_NEEDS_AUTHORIZATION"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[I] SDF SAC doc: the contract needs set_authorized first; U on exact error, PFH-030."
+  },
+  "captured": true
+}

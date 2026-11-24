@@ -1,0 +1,16 @@
+{
+  "fixture": "truth.json",
+  "capturedAt": "2026-11-08T10:58:50.019Z",
+  "script": "scripts/seed-testnet.ts",
+  "network": "testnet",
+  "source": {
+    "kind": "captured",
+    "urls": [
+      "https://soroban-testnet.stellar.org simulateTransaction"
+    ]
+  },
+  "ledger": 5622329,
+  "readsAreAtomic": false,
+  "containsSecrets": false,
+  "notes": "The recorded simulateTransaction outcome in state.json is the ground truth for this contract transfer (unsigned, not submitted)."
+}

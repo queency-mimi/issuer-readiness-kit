@@ -1,0 +1,14 @@
+{
+  "fixture": "e2e-audit.jsonl",
+  "capturedAt": "2026-11-08T10:30:59Z",
+  "script": "scripts/e2e-testnet.ts",
+  "network": "testnet",
+  "source": {
+    "kind": "soroban-rpc",
+    "url": "https://soroban-testnet.stellar.org",
+    "method": "simulateTransaction, sendTransaction, getTransaction"
+  },
+  "ledger": 5622041,
+  "containsSecrets": false,
+  "notes": "The run's audit log, byte for byte. Token deployed at ledger 5622029; freeze transaction in ledger 5622041; is_frozen read back at ledger 5622043. Throwaway keys were generated with Keypair.random() inside the run and never written. Addresses, XDR, hashes and SEP-53 signatures over approval statements are public evidence."
+}

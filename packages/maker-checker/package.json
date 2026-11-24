@@ -1,0 +1,29 @@
+{
+  "name": "@sik/maker-checker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Headless policy and audit layer for multi-party Soroban authorisation. Not a signer, never holds long-lived keys. DEMO-ONLY, testnet only, unaudited (gates G-VALUE, G-CRYPTO).",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "lint": "node scripts/lint.ts",
+    "cli": "node src/cli.ts",
+    "e2e:testnet": "node --dns-result-order=ipv4first --network-family-autoselection-attempt-timeout=10000 scripts/e2e-testnet.ts",
+    "demo:serve": "node --dns-result-order=ipv4first --network-family-autoselection-attempt-timeout=10000 scripts/demo-server.ts",
+    "demo:data": "node scripts/build-demo-data.ts",
+    "contract:test": "cd ../../contracts/rwa-demo && CARGO_INCREMENTAL=0 cargo test -j 2 --offline",
+    "contract:build": "cd ../../contracts/rwa-demo && CARGO_INCREMENTAL=0 CARGO_BUILD_JOBS=2 stellar contract build && cp target/wasm32v1-none/release/sik_maker_checker_rwa_demo.wasm ../../fixtures/maker-checker/wasm/rwa-demo.wasm"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.4.0",
+    "@stellar/stellar-sdk": "17.4.0"
+  },
+  "devDependencies": {
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
+  }
+}

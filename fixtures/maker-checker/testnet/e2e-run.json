@@ -1,0 +1,719 @@
+{
+  "kind": "maker-checker testnet e2e run",
+  "startedAt": "2026-11-08T10:28:17Z",
+  "finishedAt": "2026-11-08T10:30:59Z",
+  "network": "testnet",
+  "rpcUrl": "https://soroban-testnet.stellar.org",
+  "world": {
+    "network": "testnet",
+    "rpcUrl": "https://soroban-testnet.stellar.org",
+    "token": "CBOKJQLZUMEMWGRSTI6EPAXKNYBAG2GMA7Y25GYMN64JAMVN35IMGVCI",
+    "xlmSac": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+    "holder": "GBU5XOA7YXAOOOG4YZ35RDVZSFZ5PKJSEZDO4NYKNYFHQJ7NIQPNWAP4",
+    "treasuryRecipient": "GD7LKIABS2CVUAD2322U52VPDATX7LQNXJVCN5SN244L74SDYLXGGTFQ",
+    "policyHash": "fdae84d14b35370f643ec61c5bf1f407b313c410c3ca1b6de8a36dc1248bb24f",
+    "principals": [
+      {
+        "id": "admin-dana",
+        "label": "Dana (policy admin, runs the operations desk)",
+        "roles": [
+          "admin"
+        ],
+        "address": "GAIAE47JU6DXMQ46OIU36MHMN6IHJRZA26EYMZZXKFGLBVLJGKLKXY6U",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      },
+      {
+        "id": "checker-bob",
+        "label": "Bob (checker)",
+        "roles": [
+          "checker"
+        ],
+        "address": "GBIG6MYMTVGKW2CZKP7QGNV5WHFDM6VWEOGBIVXWGOHLEVN6EZDREJF4",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      },
+      {
+        "id": "checker-carol",
+        "label": "Carol (checker)",
+        "roles": [
+          "checker"
+        ],
+        "address": "GDERQ3ASO24JR65RFCXW4H3F2QOL6UCH75M7ZEWCWE7P7TZM2PPIVGRY",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      },
+      {
+        "id": "maker-alice",
+        "label": "Alice (maker)",
+        "roles": [
+          "maker"
+        ],
+        "address": "GBHLCK2BRKPX5Z5HMOANMHD5IVCZHRE4TKFNBY2W3VR7XAZVYTYOOIUN",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      }
+    ],
+    "signers": [
+      {
+        "signerId": "operator-key",
+        "address": "GBD4LW5MTPKQFPESE2Z2BJHT2HKX2REIXMZTHKOHXOSAGM4QAP646UXF",
+        "heldBy": "admin-dana",
+        "purpose": "Token operator: signs the Soroban authorisation entry for set_address_frozen"
+      },
+      {
+        "signerId": "fee-payer-key",
+        "address": "GDT3PVMZHCU3PQJDTRIIQ64LSTJKJGUBU7OFXORAPIJNWNTXLUUFBIHD",
+        "heldBy": "checker-carol",
+        "purpose": "Transaction source: pays the fee and signs the envelope"
+      },
+      {
+        "signerId": "alice-device",
+        "address": "GBD4LW5MTPKQFPESE2Z2BJHT2HKX2REIXMZTHKOHXOSAGM4QAP646UXF",
+        "heldBy": "maker-alice",
+        "purpose": "The operator key reached from the maker's device: used once to show S3 refuses it"
+      }
+    ],
+    "deploy": {
+      "wasmSha256": "48b6e9c59a736062499712b026c6c1c75f355637f59b7d2c2220ce5201e58e1a",
+      "wasmHash": "48b6e9c59a736062499712b026c6c1c75f355637f59b7d2c2220ce5201e58e1a",
+      "uploadTx": "9be7b22bbe7abb1128b455567b1025707395be00c553085ad6d64eda68c4c68d",
+      "deployTx": "dd31cee2048047b93627b6cd60727ea79c5e6c7a47bdc52c9426d340ec4c766f",
+      "deployLedger": 5622029
+    },
+    "explorer": {
+      "tx": "https://stellar.expert/explorer/testnet/tx/",
+      "contract": "https://stellar.expert/explorer/testnet/contract/"
+    },
+    "walletSimulator": "Throwaway testnet keys generated when this process started; held in memory only; never written or returned."
+  },
+  "policy": {
+    "version": 1,
+    "id": "mkr-testnet-demo",
+    "name": "Testnet demo: SEP-57 control actions and a treasury transfer rule (runtime addresses)",
+    "network": {
+      "name": "testnet",
+      "passphrase": "Test SDF Network ; September 2015"
+    },
+    "validity": {
+      "notBefore": "2026-11-08T10:28:48Z",
+      "expiresAt": "2026-12-08T10:29:48Z"
+    },
+    "principals": [
+      {
+        "id": "admin-dana",
+        "label": "Dana (policy admin, runs the operations desk)",
+        "roles": [
+          "admin"
+        ],
+        "address": "GAIAE47JU6DXMQ46OIU36MHMN6IHJRZA26EYMZZXKFGLBVLJGKLKXY6U",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      },
+      {
+        "id": "checker-bob",
+        "label": "Bob (checker)",
+        "roles": [
+          "checker"
+        ],
+        "address": "GBIG6MYMTVGKW2CZKP7QGNV5WHFDM6VWEOGBIVXWGOHLEVN6EZDREJF4",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      },
+      {
+        "id": "checker-carol",
+        "label": "Carol (checker)",
+        "roles": [
+          "checker"
+        ],
+        "address": "GDERQ3ASO24JR65RFCXW4H3F2QOL6UCH75M7ZEWCWE7P7TZM2PPIVGRY",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      },
+      {
+        "id": "maker-alice",
+        "label": "Alice (maker)",
+        "roles": [
+          "maker"
+        ],
+        "address": "GBHLCK2BRKPX5Z5HMOANMHD5IVCZHRE4TKFNBY2W3VR7XAZVYTYOOIUN",
+        "attestation": [
+          "stellar-sep53"
+        ]
+      }
+    ],
+    "separation": {
+      "makerCannotSign": true
+    },
+    "requestTtlSeconds": 86400,
+    "authEntryTtlLedgers": 720,
+    "rules": [
+      {
+        "id": "allow-rwa-control",
+        "effect": "allow",
+        "description": "SEP-57 control actions on the demo RWA token need two checkers and one admin, then a cooldown. No time window so the demo runs any day.",
+        "match": {
+          "targets": [
+            {
+              "contract": "CBOKJQLZUMEMWGRSTI6EPAXKNYBAG2GMA7Y25GYMN64JAMVN35IMGVCI",
+              "functions": [
+                {
+                  "name": "forced_transfer",
+                  "amountArg": 2,
+                  "recipientArg": 1
+                },
+                {
+                  "name": "pause"
+                },
+                {
+                  "name": "set_address_frozen"
+                },
+                {
+                  "name": "unpause"
+                }
+              ]
+            }
+          ],
+          "controlKinds": [
+            "forced_transfer",
+            "freeze",
+            "pause",
+            "unfreeze",
+            "unpause"
+          ]
+        },
+        "makers": [
+          "maker-alice"
+        ],
+        "approval": {
+          "checkers": {
+            "min": 2,
+            "from": [
+              "checker-bob",
+              "checker-carol"
+            ]
+          },
+          "admins": {
+            "min": 1,
+            "from": [
+              "admin-dana"
+            ]
+          }
+        },
+        "cooldownSeconds": 20
+      },
+      {
+        "id": "allow-treasury-xlm",
+        "effect": "allow",
+        "description": "Native XLM transfers to the one listed recipient, at most 1,000 XLM per request and 2,000 XLM per 24 h, one checker.",
+        "match": {
+          "targets": [
+            {
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "functions": [
+                {
+                  "name": "transfer",
+                  "amountArg": 2,
+                  "recipientArg": 1,
+                  "recipients": [
+                    "GD7LKIABS2CVUAD2322U52VPDATX7LQNXJVCN5SN244L74SDYLXGGTFQ"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "makers": [
+          "maker-alice"
+        ],
+        "approval": {
+          "checkers": {
+            "min": 1,
+            "from": [
+              "checker-bob",
+              "checker-carol"
+            ]
+          }
+        },
+        "limits": {
+          "perRequest": [
+            {
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "max": "10000000000"
+            }
+          ],
+          "rolling": [
+            {
+              "contract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+              "windowSeconds": 86400,
+              "max": "20000000000"
+            }
+          ]
+        }
+      },
+      {
+        "id": "deny-rwa-mint-burn",
+        "effect": "deny",
+        "description": "Minting and burning never go through this layer.",
+        "match": {
+          "targets": [
+            {
+              "contract": "CBOKJQLZUMEMWGRSTI6EPAXKNYBAG2GMA7Y25GYMN64JAMVN35IMGVCI",
+              "functions": [
+                {
+                  "name": "burn"
+                },
+                {
+                  "name": "mint"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "requestId": "a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1",
+  "cooldownSeconds": 20,
+  "submitted": {
+    "txHash": "be6b6fea7aeeeec1163444f31f6c1ca0f4f8115e99691e2cb1a6e7014db3f62f",
+    "status": "SUCCESS",
+    "ledger": 5622041,
+    "createdAt": "2026-11-08T10:30:47Z"
+  },
+  "frozenReadBack": {
+    "frozen": true,
+    "latestLedger": 5622043
+  },
+  "auditHead": {
+    "seq": 13,
+    "hash": "f35d73387b33b837d3330f6dacd9e187c361866501bad1779fc1b177b215fe38"
+  },
+  "auditEntries": 14,
+  "steps": [
+    {
+      "n": 1,
+      "title": "Register the policy",
+      "actor": "admin-dana",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/policies",
+          "status": 201
+        }
+      ],
+      "outcome": "policy fdae84d14b35… registered",
+      "auditSeqAfter": 0,
+      "data": {
+        "policyHash": "fdae84d14b35370f643ec61c5bf1f407b313c410c3ca1b6de8a36dc1248bb24f"
+      }
+    },
+    {
+      "n": 2,
+      "title": "Propose a mint (forbidden by a deny rule)",
+      "actor": "maker-alice",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests",
+          "status": 403,
+          "code": "MKR_E_POLICY_DENIED",
+          "message": "denied: DENY_RULE_MATCHED"
+        }
+      ],
+      "outcome": "MKR_E_POLICY_DENIED: denied: DENY_RULE_MATCHED",
+      "auditSeqAfter": 1
+    },
+    {
+      "n": 3,
+      "title": "Propose a 2,000 XLM treasury transfer (cap is 1,000 XLM per request)",
+      "actor": "maker-alice",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests",
+          "status": 403,
+          "code": "MKR_E_POLICY_DENIED",
+          "message": "denied: PER_REQUEST_LIMIT_EXCEEDED"
+        }
+      ],
+      "outcome": "MKR_E_POLICY_DENIED: denied: PER_REQUEST_LIMIT_EXCEEDED",
+      "auditSeqAfter": 2
+    },
+    {
+      "n": 4,
+      "title": "Propose 10 XLM to an address not on the recipients list",
+      "actor": "maker-alice",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests",
+          "status": 403,
+          "code": "MKR_E_POLICY_DENIED",
+          "message": "denied: NO_MATCHING_ALLOW_RULE, RECIPIENT_NOT_ALLOWED"
+        }
+      ],
+      "outcome": "MKR_E_POLICY_DENIED: denied: NO_MATCHING_ALLOW_RULE, RECIPIENT_NOT_ALLOWED",
+      "auditSeqAfter": 3
+    },
+    {
+      "n": 5,
+      "title": "Propose the freeze of the holder (SEP-57 set_address_frozen)",
+      "actor": "maker-alice",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests",
+          "status": 201
+        }
+      ],
+      "outcome": "proposed; requirement pinned: 2 checkers + 1 admin, cooldown 20 s",
+      "auditSeqAfter": 5,
+      "data": {
+        "requestId": "a283e71becba6563ab3321cd2042cf19cb8b4f97da3bbe62eb119e35e43b35a1",
+        "headline": "FREEZE all balances of GBU5...WAP4 on token CBOK...GVCI (operator GBD4...6UXF)",
+        "requirement": {
+          "checkersMin": 2,
+          "checkersFrom": [
+            "checker-bob",
+            "checker-carol"
+          ],
+          "adminsMin": 1,
+          "adminsFrom": [
+            "admin-dana"
+          ],
+          "cooldownSeconds": 20,
+          "windows": []
+        }
+      }
+    },
+    {
+      "n": 6,
+      "title": "Maker tries to approve her own request",
+      "actor": "maker-alice",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/v1/requests/a283e71b…/approval-statement?approver=maker-alice&decision=approve",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/approvals",
+          "status": 422,
+          "code": "MKR_E_SOD_VIOLATION",
+          "message": "S1: the maker cannot approve or reject their own request"
+        }
+      ],
+      "outcome": "MKR_E_SOD_VIOLATION: S1: the maker cannot approve or reject their own request",
+      "auditSeqAfter": 5
+    },
+    {
+      "n": 7,
+      "title": "Bob approves (SEP-53 signature over the statement)",
+      "actor": "checker-bob",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/v1/requests/a283e71b…/approval-statement?approver=checker-bob&decision=approve",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/approvals",
+          "status": 200
+        }
+      ],
+      "outcome": "state proposed, 1 of 2 checkers",
+      "auditSeqAfter": 6
+    },
+    {
+      "n": 8,
+      "title": "Bob tries to approve a second time",
+      "actor": "checker-bob",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/v1/requests/a283e71b…/approval-statement?approver=checker-bob&decision=approve",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/approvals",
+          "status": 422,
+          "code": "MKR_E_SOD_VIOLATION",
+          "message": "S2: this principal already decided on this request"
+        }
+      ],
+      "outcome": "MKR_E_SOD_VIOLATION: S2: this principal already decided on this request",
+      "auditSeqAfter": 6
+    },
+    {
+      "n": 9,
+      "title": "Carol sends a signature over a different statement",
+      "actor": "checker-carol",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/v1/requests/a283e71b…/approval-statement?approver=checker-carol&decision=approve",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/approvals",
+          "status": 422,
+          "code": "MKR_E_ATTESTATION_INVALID",
+          "message": "SEP-53 signature does not verify over the statement"
+        }
+      ],
+      "outcome": "MKR_E_ATTESTATION_INVALID: SEP-53 signature does not verify over the statement",
+      "auditSeqAfter": 6
+    },
+    {
+      "n": 10,
+      "title": "Carol approves",
+      "actor": "checker-carol",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/v1/requests/a283e71b…/approval-statement?approver=checker-carol&decision=approve",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/approvals",
+          "status": 200
+        }
+      ],
+      "outcome": "state proposed, 2 of 2 checkers, admin pending",
+      "auditSeqAfter": 7
+    },
+    {
+      "n": 11,
+      "title": "Dana (admin) approves: threshold met",
+      "actor": "admin-dana",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "GET",
+          "path": "/v1/requests/a283e71b…/approval-statement?approver=admin-dana&decision=approve",
+          "status": 200
+        },
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/approvals",
+          "status": 200
+        }
+      ],
+      "outcome": "state approved; signing allowed from 2026-11-08T10:30:22Z",
+      "auditSeqAfter": 9,
+      "data": {
+        "signingEligibleAt": "2026-11-08T10:30:22Z"
+      }
+    },
+    {
+      "n": 12,
+      "title": "Plan the authorisation entries (record-mode simulation)",
+      "actor": "admin-dana",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/auth-plan",
+          "status": 201
+        }
+      ],
+      "outcome": "1 slot: addressV2 entry for the operator GBD4LW…, valid until ledger 5622753",
+      "auditSeqAfter": 10,
+      "data": {
+        "planLedger": 5622033,
+        "slots": [
+          {
+            "slotId": "f0884c7e99f6846c:0",
+            "entryIndex": 0,
+            "address": "GBD4LW5MTPKQFPESE2Z2BJHT2HKX2REIXMZTHKOHXOSAGM4QAP646UXF",
+            "credentialType": "addressV2",
+            "accountKind": "classic",
+            "signerNodes": [
+              {
+                "address": "GBD4LW5MTPKQFPESE2Z2BJHT2HKX2REIXMZTHKOHXOSAGM4QAP646UXF",
+                "path": "0",
+                "accountKind": "classic",
+                "signed": false
+              }
+            ],
+            "nonce": "8557446147912383649",
+            "signatureExpirationLedger": 5622753,
+            "rootInvocationDigest": "1737c9dd5dee9a1cd43d23ee121be3d30a0267929be76d61b92159897d6b16ca",
+            "preimageHash": "2ac3823c0405ceeed3d140cca7b17ad0cc26e67dc3030a56b159e6efda71bf8f",
+            "nodes": [
+              {
+                "depth": 0,
+                "contract": "CBOKJQLZUMEMWGRSTI6EPAXKNYBAG2GMA7Y25GYMN64JAMVN35IMGVCI",
+                "function": "set_address_frozen",
+                "argsText": [
+                  "GBU5XOA7YXAOOOG4YZ35RDVZSFZ5PKJSEZDO4NYKNYFHQJ7NIQPNWAP4",
+                  "true",
+                  "GBD4LW5MTPKQFPESE2Z2BJHT2HKX2REIXMZTHKOHXOSAGM4QAP646UXF"
+                ]
+              }
+            ],
+            "entryXdr": "AAAAAgAAAAAAAAAAR8XbrJvVArySJrOgpPPR1X1EiLszM6nHu6QDM5AD/c92wifupto8oQAAAAAAAAABAAAAAAAAAAFcpMF5owjLGjKaPEeC6m4CA2jMB/GumwxvuJAyrd9QwwAAABJzZXRfYWRkcmVzc19mcm96ZW4AAAAAAAMAAAASAAAAAAAAAABp27gfxcDnONzGd9iOuZFz16kyJkbuNwpuCngn7UQe2wAAAAAAAAABAAAAEgAAAAAAAAAAR8XbrJvVArySJrOgpPPR1X1EiLszM6nHu6QDM5AD/c8AAAAA",
+            "status": "pending"
+          }
+        ]
+      }
+    },
+    {
+      "n": 13,
+      "title": "Operator signs before the cooldown has passed",
+      "actor": "admin-dana",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/auth-entries",
+          "status": 409,
+          "code": "MKR_E_TRANSITION_ILLEGAL",
+          "message": "cooldown: signing is allowed from 2026-11-08T10:30:22Z"
+        }
+      ],
+      "outcome": "MKR_E_TRANSITION_ILLEGAL: cooldown: signing is allowed from 2026-11-08T10:30:22Z",
+      "auditSeqAfter": 10
+    },
+    {
+      "n": 14,
+      "title": "The operator entry arrives from the maker's device",
+      "actor": "maker-alice",
+      "expect": "refused",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/auth-entries",
+          "status": 422,
+          "code": "MKR_E_SOD_VIOLATION",
+          "message": "S3: the maker may not contribute a signature"
+        }
+      ],
+      "outcome": "MKR_E_SOD_VIOLATION: S3: the maker may not contribute a signature",
+      "auditSeqAfter": 10
+    },
+    {
+      "n": 15,
+      "title": "Operations desk signs the operator's authorisation entry",
+      "actor": "admin-dana",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/auth-entries",
+          "status": 200
+        }
+      ],
+      "outcome": "share verified (ed25519 over the planned preimage hash); all slots complete: true",
+      "auditSeqAfter": 11
+    },
+    {
+      "n": 16,
+      "title": "Assemble: enforce-mode simulation with the signed entry",
+      "actor": "checker-carol",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/assemble",
+          "status": 200
+        }
+      ],
+      "outcome": "envelope be6b6fea7aee… ready for the fee payer",
+      "auditSeqAfter": 11,
+      "data": {
+        "envelopeHash": "be6b6fea7aeeeec1163444f31f6c1ca0f4f8115e99691e2cb1a6e7014db3f62f"
+      }
+    },
+    {
+      "n": 17,
+      "title": "Fee payer signs the envelope",
+      "actor": "checker-carol",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/signatures",
+          "status": 200
+        }
+      ],
+      "outcome": "state signed",
+      "auditSeqAfter": 12
+    },
+    {
+      "n": 18,
+      "title": "Submit to testnet",
+      "actor": "checker-carol",
+      "expect": "ok",
+      "calls": [
+        {
+          "method": "POST",
+          "path": "/v1/requests/a283e71b…/submit",
+          "status": 200
+        }
+      ],
+      "outcome": "state submitted; tx be6b6fea7aee… in ledger 5622041",
+      "auditSeqAfter": 13,
+      "data": {
+        "txHash": "be6b6fea7aeeeec1163444f31f6c1ca0f4f8115e99691e2cb1a6e7014db3f62f",
+        "status": "SUCCESS",
+        "ledger": 5622041,
+        "createdAt": "2026-11-08T10:30:47Z",
+        "explorer": "https://stellar.expert/explorer/testnet/tx/be6b6fea7aeeeec1163444f31f6c1ca0f4f8115e99691e2cb1a6e7014db3f62f"
+      }
+    },
+    {
+      "n": 19,
+      "title": "Read is_frozen(holder) back from testnet",
+      "actor": "checker-bob",
+      "expect": "ok",
+      "calls": [],
+      "outcome": "is_frozen = true at ledger 5622043",
+      "auditSeqAfter": 13,
+      "data": {
+        "frozen": true,
+        "latestLedger": 5622043
+      }
+    },
+    {
+      "n": 20,
+      "title": "Verify the audit chain",
+      "actor": "checker-bob",
+      "expect": "ok",
+      "calls": [],
+      "outcome": "ok=true, 14 entries, head f35d73387b33…",
+      "auditSeqAfter": 13,
+      "data": {
+        "ok": true,
+        "entries": 14,
+        "head": {
+          "seq": 13,
+          "hash": "f35d73387b33b837d3330f6dacd9e187c361866501bad1779fc1b177b215fe38"
+        }
+      }
+    }
+  ]
+}

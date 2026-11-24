@@ -24,3 +24,7 @@ fork-test/test_snapshots/
 # Market research (private until the user decides to publish)
 research_notes/
 reports/
+
+# preflight-harness: Stellar-Preflight clone made by the user (scripts/fetch-competitors.sh), never committed
+.competitors/
+contracts/*/test_snapshots/

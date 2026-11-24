@@ -1,0 +1,25 @@
+{
+  "note": "Each file must produce at least this violation code (SPEC section 2.5). Regenerate with scripts/make-invalid-fixtures.ts.",
+  "expect": {
+    "unknown-field.policy.json": "PD_UNKNOWN_FIELD",
+    "principals-unsorted.policy.json": "PD_NOT_SORTED",
+    "duplicate-principal-id.policy.json": "PD_DUPLICATE_ID",
+    "maker-without-maker-role.policy.json": "PD_ROLE_MISSING",
+    "groups-overlap.policy.json": "PD_GROUPS_OVERLAP",
+    "min-exceeds-from.policy.json": "PD_MIN_EXCEEDS_FROM",
+    "allow-without-approval.policy.json": "PD_ALLOW_NEEDS_APPROVAL",
+    "deny-with-approval.policy.json": "PD_DENY_HAS_ACTION_FIELDS",
+    "wildcard-function.policy.json": "PD_BAD_VALUE",
+    "sep53-without-address.policy.json": "PD_SEP53_NEEDS_ADDRESS",
+    "validity-inverted.policy.json": "PD_VALIDITY_ORDER",
+    "passphrase-mismatch.policy.json": "PD_NETWORK_PASSPHRASE_MISMATCH",
+    "limit-contract-not-targeted.policy.json": "PD_LIMIT_CONTRACT_NOT_TARGETED",
+    "recipients-without-recipient-arg.policy.json": "PD_RECIPIENT_ARG_MISSING",
+    "window-inverted.policy.json": "PD_WINDOW_ORDER",
+    "controlkind-without-function.policy.json": "PD_CONTROLKIND_FUNCTION_MISMATCH",
+    "address-bad-checksum.policy.json": "PD_ADDRESS_INVALID",
+    "muxed-recipient.policy.json": "PD_ADDRESS_INVALID",
+    "duplicate-key.policy.json": "PD_DUPLICATE_KEY",
+    "version-2.policy.json": "PD_VERSION_UNSUPPORTED"
+  }
+}

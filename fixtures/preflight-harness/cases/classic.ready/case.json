@@ -1,0 +1,32 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "classic.ready",
+  "title": "Classic asset, authorised trustline with room",
+  "tags": [
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GB7M2YB3JYBHE3RZAH32GKUNNHOWKNGFSF4DF3U6HF5VSWZM7QL62LP5",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [],
+    "mustNotReport": [
+      "TRUSTLINE_MISSING",
+      "TRUSTLINE_NOT_AUTHORIZED",
+      "TRUSTLINE_LIMIT_EXCEEDED",
+      "ACCOUNT_UNFUNDED"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[I] Baseline: a payment succeeds when the account exists and the trustline is authorised with room."
+  },
+  "captured": true
+}

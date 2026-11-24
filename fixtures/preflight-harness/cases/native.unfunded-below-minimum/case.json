@@ -1,0 +1,27 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "native.unfunded-below-minimum",
+  "title": "XLM below the createAccount minimum",
+  "tags": [
+    "@native",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GBS724SD6KK7HDTIIASEUHDXHLY74KF46MAIRXQ3HF35LG2TLPX3JWHN",
+    "asset": {
+      "kind": "native"
+    },
+    "amount": "0.5",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "AMOUNT_BELOW_ACCOUNT_MINIMUM"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[U] Only stellar-preflight models the minimum (ACCOUNT_NOT_FOUND_LOW_AMOUNT). Minimum value comes from base reserve, read it from the snapshot's network state, do not hard-code."
+  },
+  "captured": true
+}

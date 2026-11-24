@@ -1,0 +1,31 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "memo.required-memo-supplied",
+  "title": "SEP-29 memo required, memo supplied",
+  "tags": [
+    "@memo",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GALGHVRBZCSD6U6LCDR5DRQX3CXFO6YYWHLHP36ID6BAJHSG6Z67GCVG",
+    "asset": {
+      "kind": "native"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5",
+    "memo": {
+      "type": "text",
+      "value": "dep-1"
+    }
+  },
+  "expected": {
+    "mustReport": [],
+    "mustNotReport": [
+      "MEMO_REQUIRED"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[I] Presence of a memo satisfies SEP-29 (stellar-check checks presence only, no identity)."
+  },
+  "captured": true
+}

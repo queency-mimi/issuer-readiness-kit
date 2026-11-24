@@ -1,0 +1,17 @@
+{
+  "fixture": "truth.json",
+  "capturedAt": "2026-11-08T10:58:30.523Z",
+  "script": "scripts/seed-testnet.ts",
+  "network": "testnet",
+  "source": {
+    "kind": "captured",
+    "urls": [
+      "https://horizon-testnet.stellar.org/transactions (POST, testnet)",
+      "https://horizon-testnet.stellar.org/transactions/{hash}"
+    ]
+  },
+  "ledger": 5622373,
+  "readsAreAtomic": false,
+  "containsSecrets": false,
+  "notes": "One payment submitted on testnet from a throwaway sender after the state capture; the Horizon operation result is the ground truth."
+}

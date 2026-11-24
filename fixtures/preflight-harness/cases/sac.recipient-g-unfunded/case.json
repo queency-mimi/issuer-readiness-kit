@@ -1,0 +1,28 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "sac.recipient-g-unfunded",
+  "title": "SAC transfer to a non-existent G",
+  "tags": [
+    "@sac",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GBQKS4BTSPC77YNCAOTBNXGGHU3IPLLBLZCWA44U25M3E5AJN3DZUOUP",
+    "asset": {
+      "kind": "contract",
+      "contractId": "CDMLOFOCZH3EFIV7AR7T4EKRJUVEWEDO7J2XML57JIN6WRNNO7FWPWGV"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "ACCOUNT_UNFUNDED"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[S] Same #13 as a missing trustline, so simulation alone cannot tell them apart; PFH-030."
+  },
+  "captured": true
+}

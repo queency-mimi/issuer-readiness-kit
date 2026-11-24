@@ -1,0 +1,128 @@
+{
+  "note": "Public record of one seeding run on the Stellar testnet. Addresses and hashes only; no keys were ever written.",
+  "ranAt": "2026-11-08T10:58:55.340Z",
+  "horizon": "https://horizon-testnet.stellar.org",
+  "rpc": "https://soroban-testnet.stellar.org",
+  "addresses": {
+    "iPlain": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC",
+    "iAuth": "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY",
+    "iClaw": "GDCQCDULVNYPO2BZQFFJ5I5WKZIWJX4V5HAVEHHFHORUWDPRQXYL4HFA",
+    "iRev": "GCUHFEAZNYRJWBQFXSABSJAH3OTKS4GHW6W2TSU7MPBRY5FCGMEXH47Q",
+    "iCtrl": "GDVC32GZYIBXRHQEXVQINYFW4IWXYDRF5C43ES2OCVITWD3CDUOGOHSH",
+    "iNoSac": "GCHHL4KL3NJFHDHYNRPGPHBMTIZ26HT6456OMZGKRHUV7SBSENPGK224",
+    "sRich": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5",
+    "sPoor": "GAXDFXJPML3O4YJRP6HYQ5RCG7QZRDZYD6R3PU2WPDXJWTKZ3FRSY42Z",
+    "sDeauth": "GB3N2BYR5AGO643BOQPXWV6WVGJ4OYYC7PC3FN46XFVG5YXN5QHLAWXU",
+    "dest": {
+      "classic.ready": "GB7M2YB3JYBHE3RZAH32GKUNNHOWKNGFSF4DF3U6HF5VSWZM7QL62LP5",
+      "classic.trustline-missing": "GD64BT5LJTNCLV2QBUKJCSX5OP5YV7YYG4FHBDMXBDZTIUMMSEKFA6Z2",
+      "classic.trustline-unauthorized": "GDXMMK6BAPJTADHKRT6PUOVMVHU25EFLALB4AUJYPH24UIE5UNTOIJN5",
+      "classic.trustline-maintain-liabilities-only": "GBQ2UVIWEUM3UY7NNFCMQAZR247SSPAREYGM527MMN6VFJXKFGUC7R5C",
+      "classic.line-full": "GCXP6TV4LYSXV6R6L7ML5PYXYJVMD4TW5HT5AVPEOULZZR76ROFT3TUZ",
+      "classic.line-exact-fit": "GDGWZ33A2Z6YZN4SYNY6TH7O5ZB63CH2O4RTDBE3MAOOKQNXBW7CIS3N",
+      "classic.line-full-by-buying-liabilities": "GC7DVH77PZZT5WVZ56RAVYSAL3PTYFQZC4GAAZX2WYPUD2MPYLBBUWX7",
+      "classic.unfunded-credit-asset": "GCJNWCWISLFTPDDHJ4VYG7OB2DTQTT4Y4J3VJIGWK6NPDKGAO4TFUVRV",
+      "native.unfunded-create-required": "GBATKV3OAFMZWEELH2CBXHNWVN6L37DLWUU22SE67EKQPLPAFTUD3IRV",
+      "native.unfunded-below-minimum": "GBS724SD6KK7HDTIIASEUHDXHLY74KF46MAIRXQ3HF35LG2TLPX3JWHN",
+      "memo.required-no-memo": "GARY74M2XVBOCHISRLYPUNY4GBFPLCW7VOSEXD6DHERQ4W7Q56XHDT4M",
+      "memo.required-memo-supplied": "GALGHVRBZCSD6U6LCDR5DRQX3CXFO6YYWHLHP36ID6BAJHSG6Z67GCVG",
+      "memo.contract-sender-with-memo": "GBLHTM4K6S5BUVQKOPFSYRNDTCWLE6MQLNSYL6CAI5TEP5JSVBWPP4CD",
+      "muxed.classic-ready": "GAZTNIQQVPQWSHUKJYDZQV5AUNZ7UWUVJ44UZV7KNFTQN3A5W4PSJFI3",
+      "muxed.base-unfunded": "GCG4YDLW5JNO3ESJ2BJ5MXX2UYCQYINN66DKXREM2V63C6I2MJD25KRJ",
+      "classic.clawback-enabled": "GA3B3OHPE4S6BM5NRMG3R5AXXTY6U462224S6TUUOZOCG5CBQ3LZ2NLF",
+      "classic.auth-revocable": "GDAHDVPVUTRD7YAWIDW47TM5AXVVUMYZHXHTVA7BLQTNV3FFSBDWTGNT",
+      "sac.recipient-g-no-trustline": "GDD37WYPOYBJKO57Q3KW7L6KQ7BIDWXQMV5VDNDN7XLLUIORQ4UYDBIT",
+      "sac.recipient-g-unfunded": "GBQKS4BTSPC77YNCAOTBNXGGHU3IPLLBLZCWA44U25M3E5AJN3DZUOUP",
+      "sac.recipient-deauthorised": "GCZJKUWWBDXD5NPVVKE4FYIRVH2S5BWVMFBK7EUHQ75FJRQEC7HIB6CT",
+      "sac.sender-deauthorised": "GA3TKHOUIQM637WKMSLNPUP4EYNHM2TYWNNZDC5HRAS3MNHSZEFEMR2W",
+      "sender.insufficient-balance": "GDLTZTZ2MF6GQQVD4E4MGYYYVRP5PZCU7OMKP63ZWKYP5EX4BVQH3GIX",
+      "classic.ready-controlled-asset": "GD4WBDBN7CE55YUUXUSDLXELHUW62U7AWQCRVPUNVJUQECFAUNM6BBJZ",
+      "classic.reserve-short": "GDXSY5NPOKVSC3WPO6ZCW4JZVBEZ24AFHLINR2GIV6MUILO2A3MDTYAH"
+    },
+    "sacTest": "CDMLOFOCZH3EFIV7AR7T4EKRJUVEWEDO7J2XML57JIN6WRNNO7FWPWGV",
+    "sacAuth": "CCSKBNXLOPJUVVRC2J56UBQNQJGDCR4VJ5ZL2LOBZEDIQGXCA4SIWKJ4",
+    "sacRev": "CDUHLMW4EPMSNFREA2RVWD35NHXW56QES7QWFFQGURQ7LTVPJA54DBP4",
+    "undeployed": "CDCEZ6UT23XSFFP6YY5BCYDMNFVZ25L6LL7ET4R76GG23IX6CQSF42FR"
+  },
+  "setupTransactions": [
+    {
+      "purpose": "create accounts 1",
+      "hash": "1a6919f04b9563baa4f8d78eec48306304d86c0b420559059e6db22db9f44280"
+    },
+    {
+      "purpose": "issuer flags",
+      "hash": "9902c4bffa5a3cc645a1969f6e994ec236e169ea3939a94a611fd37379ea1812"
+    },
+    {
+      "purpose": "trustlines 1",
+      "hash": "d5ada71e72f80d0626153835917b093f8cf84088540102ec62eba4c24a58770f"
+    },
+    {
+      "purpose": "trustlines 2",
+      "hash": "7a2132a60832c8813f2cd6ada17e6389574f9ca6a6f4474cca625562162accd9"
+    },
+    {
+      "purpose": "authorise trustlines",
+      "hash": "fbc075f6a610c61432ca104116effe9f55f8249eaf00b70c4a92fbf56974079a"
+    },
+    {
+      "purpose": "issue assets",
+      "hash": "fc8842998691801fbaf2b9f1a663dc8f7236259954643a377decb80d3cd5018e"
+    },
+    {
+      "purpose": "reduce and revoke authorisations",
+      "hash": "b2a68449345ba5eee7fbaa245967249adf180a90c4effeb452d517e2473fffa2"
+    },
+    {
+      "purpose": "memo-required data entries and buy offer",
+      "hash": "73145004c0ed664c877cb318dedd78e035f558422ee1414a9849255e3f86cc91"
+    },
+    {
+      "purpose": "deploy SAC TEST",
+      "hash": "19a28021298a2374e73e28e2a77e9fa08bf794f7a34f3950a2f3a2115ef38e91"
+    },
+    {
+      "purpose": "deploy SAC AUTH",
+      "hash": "962b45bc82af0259f4aa10de2baf9fd3cb4c4d87e85a5a51dd5d59610e8aad00"
+    },
+    {
+      "purpose": "deploy SAC REVO",
+      "hash": "1ba631b9a4ca3b8a4a73c1bd40c64513bb91be2d190aadeea16fae6dbc563ba9"
+    },
+    {
+      "purpose": "SAC TEST transfer to the REVO SAC contract",
+      "hash": "090359f8881e7f7dcc3affe416ec33a5759611d326f18a8aafa2a821be8a2b1b"
+    }
+  ],
+  "cases": [
+    "classic.auth-revocable",
+    "classic.clawback-enabled",
+    "classic.destination-is-issuer",
+    "classic.line-exact-fit",
+    "classic.line-full",
+    "classic.line-full-by-buying-liabilities",
+    "classic.ready",
+    "classic.ready-controlled-asset",
+    "classic.reserve-short",
+    "classic.trustline-maintain-liabilities-only",
+    "classic.trustline-missing",
+    "classic.trustline-unauthorized",
+    "classic.unfunded-credit-asset",
+    "memo.contract-sender-with-memo",
+    "memo.required-memo-supplied",
+    "memo.required-no-memo",
+    "muxed.base-unfunded",
+    "muxed.classic-ready",
+    "native.unfunded-below-minimum",
+    "native.unfunded-create-required",
+    "sac.asset-sac-not-deployed",
+    "sac.c-address-needs-auth",
+    "sac.c-address-ready",
+    "sac.c-address-undeployed",
+    "sac.recipient-deauthorised",
+    "sac.recipient-g-no-trustline",
+    "sac.recipient-g-unfunded",
+    "sac.sender-deauthorised",
+    "sender.insufficient-balance"
+  ]
+}

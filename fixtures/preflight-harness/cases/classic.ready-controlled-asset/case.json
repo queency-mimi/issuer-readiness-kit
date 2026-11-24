@@ -1,0 +1,33 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "classic.ready-controlled-asset",
+  "title": "Distribution-controlled classic asset, authorised trustline",
+  "tags": [
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GD4WBDBN7CE55YUUXUSDLXELHUW62U7AWQCRVPUNVJUQECFAUNM6BBJZ",
+    "asset": {
+      "kind": "classic",
+      "code": "CTRL",
+      "issuer": "GDVC32GZYIBXRHQEXVQINYFW4IWXYDRF5C43ES2OCVITWD3CDUOGOHSH"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "ASSET_CLAWBACK_ENABLED"
+    ],
+    "mustNotReport": [
+      "TRUSTLINE_MISSING",
+      "TRUSTLINE_NOT_AUTHORIZED",
+      "ACCOUNT_UNFUNDED"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[I] Added 2026-11-08 as the base case of dtc.ready-classic-wallet (whose given text needs AUTH_REQUIRED and clawback). Stellar-Preflight reports clawback (it checks clawback before revocable)."
+  },
+  "captured": true
+}

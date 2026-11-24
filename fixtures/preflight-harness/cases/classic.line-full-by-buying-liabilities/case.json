@@ -1,0 +1,29 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "classic.line-full-by-buying-liabilities",
+  "title": "Room consumed by buying liabilities",
+  "tags": [
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GC7DVH77PZZT5WVZ56RAVYSAL3PTYFQZC4GAAZX2WYPUD2MPYLBBUWX7",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "TRUSTLINE_LIMIT_EXCEEDED"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[U] All three libraries subtract buying liabilities (read from source); whether the ledger rejects is unconfirmed; spike PFH-031."
+  },
+  "captured": true
+}

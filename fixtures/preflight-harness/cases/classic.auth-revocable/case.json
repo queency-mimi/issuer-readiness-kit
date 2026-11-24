@@ -1,0 +1,29 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "classic.auth-revocable",
+  "title": "Asset whose issuer can revoke authorisation",
+  "tags": [
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GDAHDVPVUTRD7YAWIDW47TM5AXVVUMYZHXHTVA7BLQTNV3FFSBDWTGNT",
+    "asset": {
+      "kind": "classic",
+      "code": "REVO",
+      "issuer": "GCUHFEAZNYRJWBQFXSABSJAH3OTKS4GHW6W2TSU7MPBRY5FCGMEXH47Q"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "ASSET_AUTH_REVOCABLE"
+    ],
+    "mustNotReport": [],
+    "verdict": "can_receive",
+    "rationale": "[P] Only stellar-preflight reports this."
+  },
+  "captured": true
+}

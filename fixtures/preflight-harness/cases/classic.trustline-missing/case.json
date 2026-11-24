@@ -1,0 +1,29 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "classic.trustline-missing",
+  "title": "Funded account without a trustline",
+  "tags": [
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "GD64BT5LJTNCLV2QBUKJCSX5OP5YV7YYG4FHBDMXBDZTIUMMSEKFA6Z2",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [
+      "TRUSTLINE_MISSING"
+    ],
+    "mustNotReport": [],
+    "verdict": "cannot_receive",
+    "rationale": "[P] Horizon result op_no_trust (-6), seen in StellaGate's testnet evidence (screen_H_P054.md section A)."
+  },
+  "captured": true
+}

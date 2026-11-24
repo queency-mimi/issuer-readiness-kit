@@ -1,0 +1,31 @@
+{
+  "schema": "sik.case/1",
+  "caseId": "muxed.classic-ready",
+  "title": "Muxed address over a ready account",
+  "tags": [
+    "@muxed",
+    "@classic",
+    "@testnet"
+  ],
+  "input": {
+    "network": "testnet",
+    "destination": "MAZTNIQQVPQWSHUKJYDZQV5AUNZ7UWUVJ44UZV7KNFTQN3A5W4PSIAAAAAAAAABQHELG4",
+    "asset": {
+      "kind": "classic",
+      "code": "TEST",
+      "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+    },
+    "amount": "10",
+    "sender": "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5"
+  },
+  "expected": {
+    "mustReport": [],
+    "mustNotReport": [
+      "ACCOUNT_UNFUNDED",
+      "TRUSTLINE_MISSING"
+    ],
+    "verdict": "can_receive",
+    "rationale": "[I] Muxed ids resolve to the base account. stellar-check reports muxed as out of scope (UNSUPPORTED_PAYMENT)."
+  },
+  "captured": true
+}

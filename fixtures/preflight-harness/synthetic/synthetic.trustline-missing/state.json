@@ -1,0 +1,71 @@
+{
+  "schema": "sik.state-snapshot/1",
+  "network": "testnet",
+  "ledger": 1,
+  "capturedAt": "2026-10-31T00:00:00Z",
+  "accounts": {
+    "GASVYHCTBQCHUOQ5WBQ3JQO4PHQ7KLHMEPONISQK5WADDBERVRE3DTOQ": {
+      "balance": "100000000",
+      "subentryCount": 0,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": []
+    },
+    "GASVYHCTBQCHUOQ5WA7FFQOVSXCXOCOJAADDM3JNMQORLC2LF3AU647P": {
+      "balance": "100000000",
+      "subentryCount": 0,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": []
+    },
+    "GASVYHCTBQCHUOQ5WCTVFHTFPHQ7KLHMEPONISQK5WAHOITOGVE3CLX5": {
+      "balance": "100000000",
+      "subentryCount": 1,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": [
+        {
+          "asset": {
+            "code": "TEST",
+            "issuer": "GASVYHCTBQCHUOQ5WBQ3JQO4PHQ7KLHMEPONISQK5WADDBERVRE3DTOQ"
+          },
+          "balance": "500000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": false,
+          "clawbackEnabled": false
+        }
+      ]
+    }
+  },
+  "contracts": {},
+  "sacBalances": {},
+  "simulations": [],
+  "networkParams": {
+    "baseReserveStroops": "5000000",
+    "baseFeeStroops": "100"
+  }
+}

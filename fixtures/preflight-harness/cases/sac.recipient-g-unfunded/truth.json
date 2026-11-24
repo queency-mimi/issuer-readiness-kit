@@ -1,0 +1,6 @@
+{
+  "kind": "simulation",
+  "outcome": "contract-error",
+  "contractErrorCode": 13,
+  "note": "simulateTransaction failed with Error(Contract, #13) at ledger 5622351."
+}

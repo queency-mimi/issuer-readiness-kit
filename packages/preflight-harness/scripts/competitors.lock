@@ -1,0 +1,5 @@
+# Pinned third-party sources the harness tests (not vendored: cloned on demand, gitignored).
+# name | method | spec | commit-or-version | licence | read on
+stellar-preflight | git | https://github.com/salkimos/Stellar-Preflight | 4599d9c77c66abc2a606c5d0e105777812a87844 | MIT | 2026-10-31
+stellagate-core | npm | stellagate-core | 0.1.1 | Apache-2.0 | 2026-10-31 (git HEAD read: 5cdd7cd6ce953be5a2064fe5c4aa705832fe4fbd)
+stellar-check | npm | stellar-check | 0.1.1 | Apache-2.0 | 2026-10-31 (git HEAD read: f29a88998378450dc0103373f858d92784f5be10)

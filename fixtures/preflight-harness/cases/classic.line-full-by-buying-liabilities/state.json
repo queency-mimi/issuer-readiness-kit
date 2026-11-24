@@ -1,0 +1,150 @@
+{
+  "schema": "sik.state-snapshot/1",
+  "network": "testnet",
+  "ledger": 5622281,
+  "capturedAt": "2026-11-08T10:50:49.918Z",
+  "accounts": {
+    "GBXLLNSP6Q3R23ARNKCKCTVWAYRLNJXFKBXLUM6RN5CORMQL4Y2KW6U5": {
+      "balance": "19999897963",
+      "subentryCount": 6,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": [
+        {
+          "asset": {
+            "code": "AUTH",
+            "issuer": "GDWZZOIJUE3CVXKFEVTGYPTCARKR6WFH2AKYNZSEELRVEG54REVQ7HEY"
+          },
+          "balance": "10000000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": false
+        },
+        {
+          "asset": {
+            "code": "CLAW",
+            "issuer": "GDCQCDULVNYPO2BZQFFJ5I5WKZIWJX4V5HAVEHHFHORUWDPRQXYL4HFA"
+          },
+          "balance": "10000000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": true
+        },
+        {
+          "asset": {
+            "code": "CTRL",
+            "issuer": "GDVC32GZYIBXRHQEXVQINYFW4IWXYDRF5C43ES2OCVITWD3CDUOGOHSH"
+          },
+          "balance": "10000000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": true
+        },
+        {
+          "asset": {
+            "code": "NOSAC",
+            "issuer": "GCHHL4KL3NJFHDHYNRPGPHBMTIZ26HT6456OMZGKRHUV7SBSENPGK224"
+          },
+          "balance": "10000000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": false
+        },
+        {
+          "asset": {
+            "code": "REVO",
+            "issuer": "GCUHFEAZNYRJWBQFXSABSJAH3OTKS4GHW6W2TSU7MPBRY5FCGMEXH47Q"
+          },
+          "balance": "10000000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": false
+        },
+        {
+          "asset": {
+            "code": "TEST",
+            "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+          },
+          "balance": "999950000000",
+          "limit": "9223372036854775807",
+          "buyingLiabilities": "0",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": false
+        }
+      ]
+    },
+    "GC7DVH77PZZT5WVZ56RAVYSAL3PTYFQZC4GAAZX2WYPUD2MPYLBBUWX7": {
+      "balance": "300000000",
+      "subentryCount": 2,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": [
+        {
+          "asset": {
+            "code": "TEST",
+            "issuer": "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC"
+          },
+          "balance": "800000000",
+          "limit": "1000000000",
+          "buyingLiabilities": "150000000",
+          "sellingLiabilities": "0",
+          "authorized": true,
+          "authorizedToMaintainLiabilities": true,
+          "clawbackEnabled": false
+        }
+      ]
+    },
+    "GDGAE3U5UNJCP42ERLHCXUWCX4EHIFWTVRQHYFZ6GQEWI733FNNMEWQC": {
+      "balance": "300000000",
+      "subentryCount": 0,
+      "numSponsoring": 0,
+      "numSponsored": 0,
+      "flags": {
+        "authRequired": false,
+        "authRevocable": false,
+        "authImmutable": false,
+        "clawbackEnabled": false
+      },
+      "data": {},
+      "trustlines": []
+    }
+  },
+  "contracts": {},
+  "sacBalances": {},
+  "simulations": [],
+  "networkParams": {
+    "baseReserveStroops": "5000000",
+    "baseFeeStroops": "100"
+  }
+}

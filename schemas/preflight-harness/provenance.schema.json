@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/stellar-institutional-kit/preflight-harness/schemas/provenance.schema.json",
+  "title": "Fixture provenance v1",
+  "description": "Beside every captured fixture file as <name>.provenance.json (docs/CONVENTIONS.md, Fixtures). synthetic fixtures are allowed only for adapter unit tests and carry kind=synthetic; they can never be ground truth.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fixture",
+    "capturedAt",
+    "script",
+    "network",
+    "source",
+    "ledger",
+    "containsSecrets",
+    "notes"
+  ],
+  "properties": {
+    "fixture": {
+      "type": "string"
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "script": {
+      "type": "string"
+    },
+    "scriptCommit": {
+      "type": "string"
+    },
+    "network": {
+      "enum": [
+        "testnet",
+        "mainnet"
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "urls"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "captured",
+            "synthetic"
+          ]
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rpcVersion": {
+          "type": "string"
+        },
+        "protocolVersion": {
+          "type": "integer"
+        },
+        "horizonVersion": {
+          "type": "string"
+        }
+      }
+    },
+    "ledger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "readsAreAtomic": {
+      "const": false,
+      "description": "Horizon and RPC reads are not atomic with each other (stellar-check records atomic:false)."
+    },
+    "containsSecrets": {
+      "const": false
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}
